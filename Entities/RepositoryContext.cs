@@ -5,10 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Entities.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Entities
 {
-    public class RepositoryContext : DbContext
+    public class RepositoryContext : IdentityDbContext<User>
     {
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Administrator> Administrators { get; set; }
@@ -22,6 +23,7 @@ namespace Entities
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
             //modelBuilder.ApplyConfiguration(new CompanyConfiguration());
             //modelBuilder.ApplyConfiguration(new EmployeeConfiguration());
         }
