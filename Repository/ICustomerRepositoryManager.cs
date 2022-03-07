@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace Repository
 {
-    public interface ICustomerRepository
+    public interface ICustomerRepositoryManager
     {
+        ICustomerRepository Customer { get; }
+        void Save();
     }
 }

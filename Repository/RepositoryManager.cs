@@ -10,14 +10,14 @@ namespace Repository
     public class RepositoryManager : IRepositoryManager
     {
         private RepositoryContext _repositoryContext;
-        private ICustomerRepository _customerRepository;
+        private ICustomerRepositoryManager _customerRepository;
 
         public RepositoryManager(RepositoryContext repositoryContext)
         {
             _repositoryContext = repositoryContext;
         }
 
-        public ICustomerRepository Customer
+        public ICustomerRepositoryManager Customer
         {
             get
             {

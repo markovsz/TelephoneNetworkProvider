@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace Repository
 {
-    public interface ICustomerRepository
+    public class CallRepositoryForAdministrator : CallRepository, ICallRepositoryForAdministrator
     {
+        
     }
 }

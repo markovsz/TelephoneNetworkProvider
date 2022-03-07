@@ -8,8 +8,8 @@ namespace Repository
 {
     public interface IAdministratorRepositoryManager
     {
-        ICustomerRepository Customers { get; }
-        ICustomerRepository Operators { get; }
+        ICustomerRepositoryManager Customers { get; }
+        ICustomerRepositoryManager Operators { get; }
         
 
         void Save();

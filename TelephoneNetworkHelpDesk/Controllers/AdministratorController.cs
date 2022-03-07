@@ -14,12 +14,10 @@ namespace TelephoneNetworkProvider.Controllers
     [Route("/administrator")]
     public class AdministratorController : Controller
     {
-        private UserManager<User> _userManager;
         private IMapper _mapper;
 
-        public AdministratorController(IMapper mapper, UserManager<User> userManager)
+        public AdministratorController(IMapper mapper)
         {
-            _userManager = userManager;
             _mapper = mapper;
         }
 

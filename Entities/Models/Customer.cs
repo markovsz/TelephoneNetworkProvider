@@ -21,6 +21,7 @@ namespace Entities.Models
         public string Patronymic { get; set; }
         public string Address { get; set; }
         public DateTime RegistrationDate { get; set; }
+        public bool IsBlocked { get; set; }
         public Decimal MoneyBalance { get; set; }
     }
 }
