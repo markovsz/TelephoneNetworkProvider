@@ -6,12 +6,6 @@ using System.Threading.Tasks;
 
 namespace Entities.Models
 {
-    public enum CustomerState
-    {
-        Active,
-        Blocked
-    };
-
     public class Customer
     {
         public Guid Id { get; set; }
@@ -22,6 +16,7 @@ namespace Entities.Models
         public string Address { get; set; }
         public DateTime RegistrationDate { get; set; }
         public bool IsBlocked { get; set; }
+        public bool IsPhoneNumberHided { get; set; }
         public Decimal MoneyBalance { get; set; }
     }
 }

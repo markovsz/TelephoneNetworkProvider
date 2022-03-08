@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Entities;
 using Entities.Models;
+using Entities.RequestFeatures;
 
 
 namespace Repository
@@ -18,14 +19,19 @@ namespace Repository
             _repositoryContext = repositoryContext;
         }
 
-        public IQueryable<Customer> GetCustomers(Expression<Func<Customer, bool>> expression, bool trackChanges) =>
+        public IQueryable<Customer> GetCustomers(Expression<Func<Customer, bool>> expression, CustomerParameters parameters, bool trackChanges) =>
             FindByCondition(expression, trackChanges);
 
         public void AddCustomer(Customer customer) => Create(customer);
 
+        public void UpdateCustomer(Customer customer) =>
+            Update(customer);
+
         public void DeleteCustomer(Customer customer) => Delete(customer);
+
         public void DeleteCustomerById(Guid id) => 
             Delete(FindByCondition(c => c.Id.Equals(id), true).FirstOrDefault());
+
         public void BlockCustomer(Guid id) =>
             FindByCondition(c => c.Id.Equals(id), true).FirstOrDefault().IsBlocked = true;
     }

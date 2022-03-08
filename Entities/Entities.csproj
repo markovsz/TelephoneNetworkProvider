@@ -10,8 +10,4 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.14" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="RequestFeatures\" />
-  </ItemGroup>
-
 </Project>
