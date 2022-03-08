@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace Repository
 {
-    public interface IOperatorRepositoryManager
+    public interface IGuestManager
     {
+        ICustomerRepositoryForGuest Customers { get; }
+        void Save();
     }
 }

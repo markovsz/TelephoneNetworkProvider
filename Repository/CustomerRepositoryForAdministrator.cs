@@ -19,8 +19,9 @@ namespace Repository
             _repositoryContext = repositoryContext;
         }
 
-        public IQueryable<Customer> GetCustomers(Expression<Func<Customer, bool>> expression, CustomerParameters parameters, bool trackChanges) =>
-            FindByCondition(expression, trackChanges);
+        public IEnumerable<Customer> GetCustomers(CustomerParameters parameters, bool trackChanges) =>
+            FindByCondition(c => true, trackChanges)
+            .ToList();
 
         public void AddCustomer(Customer customer) => Create(customer);
 

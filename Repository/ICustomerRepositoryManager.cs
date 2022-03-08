@@ -8,7 +8,7 @@ namespace Repository
 {
     public interface ICustomerRepositoryManager
     {
-        ICustomerRepository Customer { get; }
+        ICustomerManager Customer { get; }
         void Save();
     }
 }

@@ -11,7 +11,7 @@ namespace Repository
 {
     public interface ICustomerRepositoryForAdministrator
     {
-        IQueryable<Customer> GetCustomers(Expression<Func<Customer, bool>> expression, CustomerParameters parameters, bool trackChanges);
+        IEnumerable<Customer> GetCustomers(CustomerParameters parameters, bool trackChanges);
         void AddCustomer(Customer customer);
         void UpdateCustomer(Customer customer);
         void DeleteCustomer(Customer customer);

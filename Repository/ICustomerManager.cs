@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace Repository
 {
-    public interface IRepositoryManager
+    public interface ICustomerManager
     {
-        ICustomerRepository Customer { get; }
+        ICustomerRepositoryForCustomer Customer { get; }
+        ICallRepositoryForCustomer Calls { get; }
         void Save();
     }
 }

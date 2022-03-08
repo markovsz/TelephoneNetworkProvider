@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Repository
 {
-    public class CallRepository : ICallRepository
+    public interface IOperatorManager
     {
-
+        ICallRepositoryForOperator Calls { get; }
+        void Save();
     }
 }

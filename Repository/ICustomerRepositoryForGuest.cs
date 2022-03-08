@@ -10,6 +10,6 @@ namespace Repository
 {
     public interface ICustomerRepositoryForGuest
     {
-        IQueryable<Customer> GetCustomers(RequestParameters parameters);
+        IEnumerable<Customer> GetCustomers(CustomerParameters parameters);
     }
 }

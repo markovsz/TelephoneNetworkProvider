@@ -11,6 +11,6 @@ namespace Repository
 {
     public interface ICallRepositoryForCustomer
     {
-        IQueryable<Call> GetCalls(Guid customerId, Expression<Func<Customer, bool>> expression, CallParameters parameters);
+        IEnumerable<Call> GetCalls(Guid customerId, CallParameters parameters);
     }
 }

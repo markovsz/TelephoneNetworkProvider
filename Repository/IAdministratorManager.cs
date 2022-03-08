@@ -6,12 +6,10 @@ using System.Threading.Tasks;
 
 namespace Repository
 {
-    public interface IAdministratorRepositoryManager
+    public interface IAdministratorManager
     {
-        ICustomerRepositoryManager Customers { get; }
-        ICustomerRepositoryManager Operators { get; }
-        
-
+        ICustomerRepositoryForAdministrator Customers { get; }
+        ICallRepositoryForAdministrator Calls { get; }
         void Save();
     }
 }

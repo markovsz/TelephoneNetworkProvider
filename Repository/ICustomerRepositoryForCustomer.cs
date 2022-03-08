@@ -9,8 +9,9 @@ namespace Repository
 {
     public interface ICustomerRepositoryForCustomer
     {
-        IQueryable<Customer> GetCustomer(bool trackChanges);
+        Customer GetCustomer(Guid id, bool trackChanges);
         void UpdateCustomer(Customer customer);
         void DeleteCustomer(Customer customer);
+        void DeleteCustomerById(Guid id);
     }
 }
