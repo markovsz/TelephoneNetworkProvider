@@ -8,10 +8,10 @@ namespace Entities.Models
 {
     public class Call
     {
-        public Guid Id { get; set; }
-        public Guid CallerId { get; set; }
+        public uint Id { get; set; }
+        public string CallerId { get; set; }
         public Customer Caller { get; set; }
-        public Guid CalledById { get; set; }
+        public string CalledById { get; set; }
         public Customer CalledBy { get; set; }
         public DateTime CallInitiationTime { get; set; }
         public DateTime CallEndTime { get; set; }

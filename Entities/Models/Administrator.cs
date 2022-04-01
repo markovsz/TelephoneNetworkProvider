@@ -8,8 +8,6 @@ namespace Entities.Models
 {
     public class Administrator
     {
-        public Guid Id { get; set; }
         public string UserId { get; set; }
-        //public ICollection<Customer> Customers { get; set; }
     }
 }

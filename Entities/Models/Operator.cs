@@ -8,7 +8,6 @@ namespace Entities.Models
 {
     public class Operator
     {
-        public Guid Id { get; set; }
         public string UserId { get; set; }
         //public ICollection<Call> Calls { get; set; }
     }
