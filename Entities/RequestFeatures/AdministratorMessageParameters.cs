@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace Entities.RequestFeatures
 {
-    public class RequestParameters
+    public class AdministratorMessageParameters : RequestParameters
     {
-        public const int MaxPageSize = 50;
-        public int PageNumber { get; set; }
-        public int? PageSize { get; set; }
+        public string UserId { get; set; }
+        public string Status { get; set; }
     }
 }

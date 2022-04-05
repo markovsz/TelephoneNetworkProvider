@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace Entities.RequestFeatures
 {
-    public class CustomerParameters
+    public class CustomerParameters : RequestParameters
     {
-        const int fixedPageSize = 50;
-        public int PageNumber { get; set; }
         public string NamePart { get; set; }
         public string SurnamePart { get; set; }
         public string PatronymicPart { get; set; }
