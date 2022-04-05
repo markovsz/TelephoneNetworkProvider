@@ -6,44 +6,38 @@ using System.Threading.Tasks;
 using Entities.Models;
 using Entities.DataTransferObjects;
 using Microsoft.AspNetCore.Identity;
+using AutoMapper;
+using Repository;
+using TelephoneNetworkProvider.ActionFilters;
+using BussinessLogic;
 
 namespace TelephoneNetworkProvider.Controllers
 {
+    [Route("/login")]
     public class AuthenticationController : Controller
     {
-        private UserManager<User> _userManager;
+        private IAuthenticationLogic _authenticationLogic;
 
-        public AuthenticationController(UserManager<User> userManager)
+        public AuthenticationController(IAuthenticationLogic authenticationLogic)
         {
-            _userManager = userManager;
-        }
-
-
-        [HttpGet]
-        [Route("/registration")]
-        public IActionResult Registration()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        [Route("/registration")]
-        public IActionResult Registration(RegistrationDto registrationDto)
-        {
-            return View();
+            _authenticationLogic = authenticationLogic;
         }
 
         [HttpGet]
-        [Route("/login")]
-        public IActionResult LogIn()
+        public IActionResult GetLogInPage()
         {
             return View();
         }
 
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
         [HttpPost]
-        [Route("/login")]
-        public IActionResult LogIn(LoginDto loginDto)
+        public async Task<IActionResult> Authentication(UserForAuthenticationDto user)
         {
+            bool status = await _authenticationLogic.ValidateUser(user);
+            if (!status)
+            {
+                return BadRequest();//NO! (I don't remember)
+            } 
 
             return View();
         }
