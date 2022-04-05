@@ -18,8 +18,9 @@ namespace Entities.Models
         public string Address { get; set; }
         public string PhoneNumber { get; set; }
         public DateTime RegistrationDate { get; set; }
-        public uint WarningMessagesBeforeLock { get; set; }
+        //public uint WarningMessagesBeforeLock { get; set; }
         public bool IsBlocked { get; set; }
+        public DateTime LastBlockTime { get; set; }
         public bool IsPhoneNumberHided { get; set; }
         public Decimal MoneyBalance { get; set; }
     }
