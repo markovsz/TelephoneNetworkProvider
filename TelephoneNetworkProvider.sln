@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TelephoneNetworkProvider", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Entities", "Entities\Entities.csproj", "{A38709B8-E03D-4B27-9011-DCCAA896A1EC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repository", "Repository\Repository.csproj", "{2FD0ECC6-5E11-4122-9F75-588972B4F8F5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repository", "Repository\Repository.csproj", "{2FD0ECC6-5E11-4122-9F75-588972B4F8F5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BussinessLogic", "BussinessLogic\BussinessLogic.csproj", "{EFE50D61-31F7-411D-BB19-8683EBBB0320}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{2FD0ECC6-5E11-4122-9F75-588972B4F8F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2FD0ECC6-5E11-4122-9F75-588972B4F8F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2FD0ECC6-5E11-4122-9F75-588972B4F8F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFE50D61-31F7-411D-BB19-8683EBBB0320}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFE50D61-31F7-411D-BB19-8683EBBB0320}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFE50D61-31F7-411D-BB19-8683EBBB0320}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFE50D61-31F7-411D-BB19-8683EBBB0320}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

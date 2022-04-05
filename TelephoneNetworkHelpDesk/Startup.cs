@@ -25,6 +25,11 @@ namespace TelephoneNetworkProvider
         {
             services.ConfigureSqlContext(Configuration);
             services.ConfigureRepositoryManager();
+            services.ConfigureIdentity();
+            services.ConfigureJWT(Configuration);
+            services.ConfigureActionFilters();
+            services.ConfigureBussinessLogic();
+
             //services.AddControllers();
             services.AddMvc();
         }
@@ -41,8 +46,8 @@ namespace TelephoneNetworkProvider
 
             app.UseRouting();
 
-            //app.UseAuthentication();
-            //app.UseAuthorization();
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
