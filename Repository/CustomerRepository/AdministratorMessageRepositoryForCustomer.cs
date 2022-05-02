@@ -16,8 +16,8 @@ namespace Repository.CustomerRepository
         {
         }
 
-        public IEnumerable<AdministratorMessage> GetMessages(string userId, AdministratorMessageParameters parameters) =>
-            FindByCondition(m => m.UserId.Equals(userId), false)
+        public IEnumerable<AdministratorMessage> GetMessages(uint customerId, AdministratorMessageParameters parameters) =>
+            FindByCondition(m => m.CustomerId.Equals(customerId), false)
             .AdministratorMessageParametersHandler(parameters)
             .ToList();
     }

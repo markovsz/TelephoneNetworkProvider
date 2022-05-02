@@ -7,7 +7,7 @@ using Entities;
 using Entities.Models;
 using Entities.RequestFeatures;
 
-namespace Repository
+namespace Repository.AdministratorRepository
 {
     public class CallRepositoryForAdministrator : RepositoryBase<Call>, ICallRepositoryForAdministrator
     {
@@ -25,8 +25,8 @@ namespace Repository
             .CallParametersHandler(parameters)
             .ToList();
 
-        public IEnumerable<Call> GetCustomerCalls(string userId, CallParameters parameters) =>
-            FindByCondition(c => c.Caller.UserId.Equals(userId) || c.CalledBy.UserId.Equals(userId), false)
+        public IEnumerable<Call> GetCustomerCalls(uint customerId, CallParameters parameters) =>
+            FindByCondition(c => c.Caller.Id.Equals(customerId) || c.CalledBy.Id.Equals(customerId), false)
             .CallParametersHandler(parameters)
             .ToList();
     }

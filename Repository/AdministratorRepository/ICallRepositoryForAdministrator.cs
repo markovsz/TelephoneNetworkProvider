@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 using Entities.Models;
 using Entities.RequestFeatures;
 
-namespace Repository
+namespace Repository.AdministratorRepository
 {
     public interface ICallRepositoryForAdministrator
     {
         Call GetCall(uint id);
         IEnumerable<Call> GetCalls(CallParameters parameters);
-        IEnumerable<Call> GetCustomerCalls(string userId, CallParameters parameters);
+        IEnumerable<Call> GetCustomerCalls(uint customerId, CallParameters parameters);
     }
 }

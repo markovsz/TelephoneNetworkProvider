@@ -7,7 +7,7 @@ using Entities;
 using Entities.Models;
 using Entities.RequestFeatures;
 
-namespace Repository
+namespace Repository.AdministratorRepository
 {
     public class AdministratorMessageRepositoryForAdministrator : RepositoryBase<AdministratorMessage>, IAdministratorMessageRepositoryForAdministrator
     {
@@ -20,13 +20,13 @@ namespace Repository
         public IEnumerable<AdministratorMessage> GetMessage(uint id) =>
             FindByCondition(m => m.Id.Equals(id), false);
 
-        public IEnumerable<AdministratorMessage> GetCustomerMessages(string userId, AdministratorMessageParameters parameters) =>
-            FindByCondition(m => m.UserId.Equals(userId), false)
+        public IEnumerable<AdministratorMessage> GetCustomerMessages(uint customerId, AdministratorMessageParameters parameters) =>
+            FindByCondition(m => m.CustomerId.Equals(customerId), false)
             .AdministratorMessageParametersHandler(parameters)
             .ToList();
 
-        public IEnumerable<AdministratorMessage> GetCustomerWarningMessagesFromTime(string userId, DateTime startTime) =>
-            FindByCondition(m => m.UserId.Equals(userId), false)
+        public IEnumerable<AdministratorMessage> GetCustomerWarningMessagesFromTime(uint customerId, DateTime startTime) =>
+            FindByCondition(m => m.CustomerId.Equals(customerId), false)
             .Where(m => m.Status.Equals("warning"))
             .Where(m => m.SendingTime.CompareTo(startTime) == 1)
             .ToList();
@@ -35,5 +35,10 @@ namespace Repository
 
         public void DeleteMessage(uint id) =>
             Delete(FindByCondition(m => m.Id.Equals(id), true).FirstOrDefault());
+
+        //public IEnumerable<AdministratorMessage> GetAdministratorMessagesByCustomerUserId(uint customerId, AdministratorMessageParameters parameters) =>
+        //    FindByCondition(m => m.CustomerId.Equals(customerId), false)
+        //    .AdministratorMessageParametersHandler(parameters)
+        //    .ToList();
     }
 }

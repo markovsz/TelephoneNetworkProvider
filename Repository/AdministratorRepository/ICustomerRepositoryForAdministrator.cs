@@ -7,16 +7,16 @@ using System.Threading.Tasks;
 using Entities.Models;
 using Entities.RequestFeatures;
 
-namespace Repository
+namespace Repository.AdministratorRepository
 {
     public interface ICustomerRepositoryForAdministrator
     {
         IEnumerable<Customer> GetCustomers(CustomerParameters parameters, bool trackChanges);
-        Customer GetCustomerByUserId(string userId, bool trackChanges);
+        Customer GetCustomerInfo(uint customerId, bool trackChanges);
         void AddCustomer(Customer customer);
         void UpdateCustomer(Customer customer);
         void DeleteCustomer(Customer customer);
-        void DeleteCustomerByUserId(string userId);
+        void DeleteCustomerByUserId(uint customerId);
         Customer FindCustomerByPhoneNumber(string phoneNumber, bool trackChanges);
     }
 }

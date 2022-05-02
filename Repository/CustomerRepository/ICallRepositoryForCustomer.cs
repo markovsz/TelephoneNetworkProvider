@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 using Entities.Models;
 using Entities.RequestFeatures;
 
-namespace Repository
+namespace Repository.CustomerRepository
 {
     public interface ICallRepositoryForCustomer
     {
-        IEnumerable<Call> GetCalls(string userId, CallParameters parameters);
+        IEnumerable<Call> GetCalls(uint customerId, CallParameters parameters);
+        Call GetCall(uint id);
     }
 }

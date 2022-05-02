@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Entities.Models;
 using Entities.RequestFeatures;
-using Repository.Exceptions;
+using Microsoft.EntityFrameworkCore;
 
 namespace Repository
 {
@@ -14,12 +14,16 @@ namespace Repository
         public static IQueryable<Call> CallParametersHandler(this IQueryable<Call> calls, CallParameters parameters)
         {
             if (parameters.PhoneNumberPart is not null)
-                calls = calls.Where(c => c.Caller.PhoneNumber.Contains(parameters.PhoneNumberPart));
+                calls = calls
+                    .Include(c => c.Caller)
+                    .Include(c => c.CalledBy)
+                    .Where(c => c.Caller.PhoneNumber.Contains(parameters.PhoneNumberPart) || c.CalledBy.PhoneNumber.Contains(parameters.PhoneNumberPart));
 
             if (parameters.MinCallInitiationTime.HasValue)
             {
                 DateTime minCallInitiationTime = parameters.MinCallInitiationTime.Value;
-                calls = calls.Where(c => minCallInitiationTime.CompareTo(c.CallInitiationTime) <= 0);
+                calls = calls
+                    .Where(c => minCallInitiationTime.CompareTo(c.CallInitiationTime) <= 0);
             }
 
             if (parameters.MaxCallInitiationTime.HasValue)
@@ -54,6 +58,8 @@ namespace Repository
 
         public static IQueryable<AdministratorMessage> AdministratorMessageParametersHandler(this IQueryable<AdministratorMessage> messages, AdministratorMessageParameters parameters)
         {
+            //TODO
+
             return messages
                 .RequestParametersHandler(parameters);
         }

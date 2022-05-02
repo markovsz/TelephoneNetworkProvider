@@ -7,36 +7,36 @@ using System.Threading.Tasks;
 using Entities;
 using Entities.Models;
 using Entities.RequestFeatures;
+using Repository.CustomerAcquisitionRepository;
 
 
-namespace Repository
+namespace Repository.AdministratorRepository
 {
     public class CustomerRepositoryForAdministrator : RepositoryBase<Customer>, ICustomerRepositoryForAdministrator
     {
-        public CustomerRepositoryForAdministrator(RepositoryContext repositoryContext)
+        private ICustomerDataAcquisitionRepository _customerDataAcquisitionRepository;
+
+        public CustomerRepositoryForAdministrator(RepositoryContext repositoryContext, ICustomerDataAcquisitionRepository customerDataAcquisitionRepository)
             : base(repositoryContext)
         {
-            _repositoryContext = repositoryContext;
+            _customerDataAcquisitionRepository = customerDataAcquisitionRepository;
         }
 
         public IEnumerable<Customer> GetCustomers(CustomerParameters parameters, bool trackChanges) =>
-            FindByCondition(c => true, trackChanges)
-            .ToList();
+            _customerDataAcquisitionRepository.GetCustomers(parameters);
 
-        public Customer GetCustomerByUserId(string userId, bool trackChanges) =>
-            FindByCondition(c => c.UserId.Equals(userId), trackChanges)
-            .FirstOrDefault();
+        public Customer GetCustomerInfo(uint customerId, bool trackChanges) =>
+            _customerDataAcquisitionRepository.GetCustomerInfo(customerId, trackChanges);
 
         public void AddCustomer(Customer customer) => Create(customer);
 
-        public void UpdateCustomer(Customer customer) =>
-            Update(customer);
+        public void UpdateCustomer(Customer customer) => Update(customer);
 
         public void DeleteCustomer(Customer customer) => Delete(customer);
 
-        public void DeleteCustomerByUserId(string userId) => 
-            Delete(FindByCondition(c => c.UserId.Equals(userId), true).FirstOrDefault());
-
+        public void DeleteCustomerByUserId(uint customerId) =>
+            Delete(GetCustomerInfo(customerId, true));
+        
         public Customer FindCustomerByPhoneNumber(string phoneNumber, bool trackChanges) =>
             FindByCondition(c => c.PhoneNumber.Equals(phoneNumber), trackChanges)
             .FirstOrDefault();

@@ -7,27 +7,30 @@ using System.Threading.Tasks;
 using Entities;
 using Entities.Models;
 using Entities.RequestFeatures;
+using Repository.CustomerAcquisitionRepository;
 
-namespace Repository
+namespace Repository.CustomerRepository
 {
     public class CustomerRepositoryForCustomer : RepositoryBase<Customer>, ICustomerRepositoryForCustomer
     {
-        public CustomerRepositoryForCustomer(RepositoryContext repositoryContext)
+        private ICustomerDataAcquisitionRepository _customerDataAcquisitionRepository;
+
+        public CustomerRepositoryForCustomer(RepositoryContext repositoryContext, ICustomerDataAcquisitionRepository customerDataAcquisitionRepository)
             : base(repositoryContext)
         {
+            _customerDataAcquisitionRepository = customerDataAcquisitionRepository;
         }
-        public Customer GetCustomer(string userId, bool trackChanges) =>
-            FindByCondition(c => c.UserId.Equals(userId), trackChanges).FirstOrDefault();
+
+        public Customer GetCustomer(uint customerId, bool trackChanges) =>
+            _customerDataAcquisitionRepository.GetCustomerInfo(customerId, trackChanges);
 
         public IEnumerable<Customer> GetCustomers(CustomerParameters parameters) =>
-            FindAll(false)
-            .CustomerParametersHandler(parameters)
-            .ToList();
+            _customerDataAcquisitionRepository.GetCustomers(parameters);
             
         public void UpdateCustomer(Customer customer) => Update(customer);
         public void DeleteCustomer(Customer customer) => Delete(customer);
-        public void DeleteCustomerByUserId(string userId) => 
-            Delete(FindByCondition(c => c.UserId.Equals(userId), true).FirstOrDefault());
+        public void DeleteCustomerByUserId(uint customerId) => 
+            Delete(FindByCondition(c => c.Id.Equals(customerId), true).FirstOrDefault());
 
     }
 }

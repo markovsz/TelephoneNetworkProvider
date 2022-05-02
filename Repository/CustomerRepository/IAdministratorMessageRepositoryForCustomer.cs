@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 using Entities.Models;
 using Entities.RequestFeatures;
 
-namespace Repository
+namespace Repository.CustomerRepository
 {
     public interface IAdministratorMessageRepositoryForCustomer
     {
-        IEnumerable<AdministratorMessage> GetMessages(string userId, AdministratorMessageParameters parameters);
+        IEnumerable<AdministratorMessage> GetMessages(uint customerId, AdministratorMessageParameters parameters);
     }
 }

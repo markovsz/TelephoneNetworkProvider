@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using Entities.Models;
 using Entities.RequestFeatures;
 
-namespace Repository.GuestRepository
+namespace Repository.OperatorRepository
 {
-    public interface ICustomerRepositoryForGuest
+    public interface ICustomerRepositoryForOperator
     {
         IEnumerable<Customer> GetCustomers(CustomerParameters parameters);
         Customer GetCustomerInfo(uint customerId);

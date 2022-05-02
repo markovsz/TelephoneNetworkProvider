@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Repository
+namespace Repository.CustomerRepository
 {
     public interface ICustomerManager
     {
         ICustomerRepositoryForCustomer Customer { get; }
         ICallRepositoryForCustomer Calls { get; }
+        IAdministratorMessageRepositoryForCustomer AdministratorMessages { get; }
         void Save();
     }
 }

@@ -8,22 +8,22 @@ using Entities.Models;
 using Entities.RequestFeatures;
 using Repository.CustomerAcquisitionRepository;
 
-namespace Repository.GuestRepository
+namespace Repository.OperatorRepository
 {
-    public class CustomerRepositoryForGuest : RepositoryBase<Customer>, ICustomerRepositoryForGuest
+    class CustomerRepositoryForOperator : RepositoryBase<Customer>, ICustomerRepositoryForOperator
     {
         private ICustomerDataAcquisitionRepository _customerDataAcquisitionRepository;
 
-        public CustomerRepositoryForGuest(RepositoryContext repositoryContext, ICustomerDataAcquisitionRepository customerDataAcquisitionRepository)
+        public CustomerRepositoryForOperator(RepositoryContext repositoryContext, ICustomerDataAcquisitionRepository customerDataAcquisitionRepository)
             : base(repositoryContext)
         {
             _customerDataAcquisitionRepository = customerDataAcquisitionRepository;
         }
 
-        public Customer GetCustomerInfo(uint customerId) =>
-            _customerDataAcquisitionRepository.GetCustomerInfo(customerId, false);
-
         public IEnumerable<Customer> GetCustomers(CustomerParameters parameters) =>
             _customerDataAcquisitionRepository.GetCustomers(parameters);
+
+        public Customer GetCustomerInfo(uint customerId) =>
+            _customerDataAcquisitionRepository.GetCustomerInfo(customerId, false);
     }
 }

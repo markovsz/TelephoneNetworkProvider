@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Entities;
 using Entities.Models;
-;
+using Repository.CustomerAcquisitionRepository;
 
-namespace Repository
+namespace Repository.AdministratorRepository
 {
     public class AdministratorManager : IAdministratorManager
     {
@@ -15,9 +15,11 @@ namespace Repository
         private ICustomerRepositoryForAdministrator _customerRepository;
         private ICallRepositoryForAdministrator _callRepository;
         private IAdministratorMessageRepositoryForAdministrator _administratorMessageRepository;
-        public AdministratorManager(RepositoryContext repositoryContext)
+        private ICustomerDataAcquisitionRepository _customerDataAcquisitionRepository;
+        public AdministratorManager(RepositoryContext repositoryContext, ICustomerDataAcquisitionRepository customerDataAcquisitionRepository)
         {
             _repositoryContext = repositoryContext;
+            _customerDataAcquisitionRepository = customerDataAcquisitionRepository;
         }
 
         public ICustomerRepositoryForAdministrator Customers
@@ -25,7 +27,7 @@ namespace Repository
             get
             {
                 if (_customerRepository == null)
-                    _customerRepository = new CustomerRepositoryForAdministrator(_repositoryContext);
+                    _customerRepository = new CustomerRepositoryForAdministrator(_repositoryContext, _customerDataAcquisitionRepository);
                 return _customerRepository;
             }
         }
