@@ -7,14 +7,18 @@ using System.Threading.Tasks;
 
 namespace Entities.DataTransferObjects
 {
-    public class UserForAuthenticationDto
+    public abstract class AdministratorMessageForCreate
     {
         [Required]
-        [MaxLength(20)]
-        public string UserId { get; set; }
+        public uint CustomerId { get; set; }
+
 
         [Required]
-        [MaxLength(40)]
-        public string Password { get; set; }
+        [MaxLength(20)]
+        public string Status { get; set; }
+
+
+        [MaxLength(20)]
+        public string Text { get; set; }
     }
 }

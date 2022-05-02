@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Entities.DataTransferObjects
 {
-    public class CustomerForUpdateInCustomerDto : CustomerForUpdate
+    public class CallForReadInCustomerDto : CallForRead
     {
     }
 }

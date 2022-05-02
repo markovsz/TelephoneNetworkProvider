@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Entities.DataTransferObjects
 {
-    public class RegistrationDto
+    public class RegistrationDto/*!*/
     {
         public string UserId { get; set; }
         public string Password { get; set; }
