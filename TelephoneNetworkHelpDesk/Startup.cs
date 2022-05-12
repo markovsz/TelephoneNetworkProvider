@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using AutoMapper;
 
 namespace TelephoneNetworkProvider
 {
@@ -23,14 +24,14 @@ namespace TelephoneNetworkProvider
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.ConfigureSwagger();
             services.ConfigureSqlContext(Configuration);
             services.ConfigureRepositoryManager();
             services.ConfigureIdentity();
             services.ConfigureJWT(Configuration);
-            services.ConfigureActionFilters();
+            services.AddAutoMapper(typeof(MappingProfile));
             services.ConfigureBussinessLogic();
-
-            //services.AddControllers();
+            services.ConfigureActionFilters();
             services.AddMvc();
         }
 
@@ -42,12 +43,22 @@ namespace TelephoneNetworkProvider
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseSwagger();
+            app.UseSwaggerUI(s =>
+            {
+                s.SwaggerEndpoint("/swagger/v1/swagger.json", "Code Maze API v1");
+                s.SwaggerEndpoint("/swagger/v2/swagger.json", "Code Maze API v2");
+            });
+
             app.UseStaticFiles();
 
             app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+
+
 
             app.UseEndpoints(endpoints =>
             {
