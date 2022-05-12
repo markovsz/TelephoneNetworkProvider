@@ -1,11 +1,7 @@
 ﻿using BussinessLogic;
-using Entities.Models;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace TelephoneNetworkProvider.ActionFilters
 {
@@ -26,9 +22,24 @@ namespace TelephoneNetworkProvider.ActionFilters
         {
             var action = context.RouteData.Values["action"];
             var controller = context.RouteData.Values["controller"];
-            var customerId = (uint)context.ActionArguments["id"];
+            var customerId = (int)context.ActionArguments["customerId"];
+            if (customerId < 1)
+                context.Result = new BadRequestObjectResult("In {controller}.{action}, invalid customer id");
+            //int pos = 0;
+            //var pathParts = context.HttpContext.Request.Path.Value.Split('/');
+            //for(int i = 0; i < pathParts.Length; ++i)
+            //{
+            //    if (pathParts[i].Equals("customer"))
+            //    {
+            //        pos = i + 1;
+            //    }
+            //}
+            //int customerId;
+            //bool isValid = Int32.TryParse(pathParts[pos], out customerId);
+            //if (!isValid)
+            //    context.Result = new BadRequestObjectResult($"In {controller}.{action}, customer id was wrong");
             bool isExist = _administratorLogic.CheckCustomer(customerId);
-            if (isExist)
+            if (!isExist)
                 context.Result = new BadRequestObjectResult($"In {controller}.{action}, customer with id = {customerId} not found");
         }
     }

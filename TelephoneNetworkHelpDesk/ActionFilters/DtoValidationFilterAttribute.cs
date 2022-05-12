@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace TelephoneNetworkProvider.ActionFilters
 {
-    public class ValidationFilterAttribute : IActionFilter
+    public class DtoValidationFilterAttribute : IActionFilter
     {
         public void OnActionExecuted(ActionExecutedContext context)
         {

@@ -10,9 +10,9 @@ namespace TelephoneNetworkProvider.ActionFilters
 {
     public class CallExistenceFilterAttribute : IActionFilter
     {
-        private AdministratorLogic _administratorLogic;
+        private IAdministratorLogic _administratorLogic;
 
-        public CallExistenceFilterAttribute(AdministratorLogic administratorLogic)
+        public CallExistenceFilterAttribute(IAdministratorLogic administratorLogic)
         {
             _administratorLogic = administratorLogic;
         }
@@ -25,10 +25,12 @@ namespace TelephoneNetworkProvider.ActionFilters
         {
             var action = context.RouteData.Values["action"];
             var controller = context.RouteData.Values["controller"];
-            var customerId = (uint)context.ActionArguments["id"];
-            bool isExist = _administratorLogic.CheckCall(customerId);
+            var callId = (int)context.ActionArguments["id"];
+            if (callId < 1)
+                context.Result = new BadRequestObjectResult("In {controller}.{action}, invalid call id");
+            bool isExist = _administratorLogic.CheckCall(callId);
             if (isExist)
-                context.Result = new BadRequestObjectResult($"In {controller}.{action}, call with id = {customerId} not found");
+                context.Result = new BadRequestObjectResult($"In {controller}.{action}, call with id = {callId} not found");
         }
     }
 }
