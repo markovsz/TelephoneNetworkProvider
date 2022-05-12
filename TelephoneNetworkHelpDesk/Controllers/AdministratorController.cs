@@ -17,8 +17,9 @@ using BussinessLogic.Exceptions;
 namespace TelephoneNetworkProvider.Controllers
 {
     [Authorize(Roles = "Administrator")]
-    [Route("/administrator")]
-    public class AdministratorController : Controller
+    [Route("/administrator-profile")]
+    [ApiController]
+    public class AdministratorController : ControllerBase
     {
         private IAdministratorLogic _administratorLogic;
 
@@ -27,82 +28,84 @@ namespace TelephoneNetworkProvider.Controllers
             _administratorLogic = administratorLogic;
         }
 
-        [HttpGet]
-        public IActionResult Index()
-        {
-            return View();
-        }
-
-        [Route("~/customers")]
-        [HttpGet]
+        //[ServiceFilter(typeof(ParametersValidationFilterAttribute))]
+        [HttpGet("/administrator-profile/customers")]
         public IActionResult GetCustomers([FromQuery] CustomerParameters parameters)
         {
             var customers = _administratorLogic.GetCustomers(parameters);
-            return View(customers);
+            return Ok(customers);
         }
 
         [ServiceFilter(typeof(CustomerExistenceFilterAttribute))]
-        [Route("~/customers/{id}")]
+        [Route("/administrator-profile/customers/customer/{customerId:int}")]
         [HttpGet]
-        public IActionResult GetCustomerInfo([FromQuery] string userId)
+        public IActionResult GetCustomerInfo(int customerId)
         {
-            var customer = _administratorLogic.GetCustomerInfo(userId);
+            var customer = _administratorLogic.GetCustomerInfo(customerId);
             return Ok(customer);
         }
 
+
+        [ServiceFilter(typeof(ParametersValidationFilterAttribute))]
         [ServiceFilter(typeof(CustomerExistenceFilterAttribute))]
-        [Route("~/customers/{id}/calls")]
+        [Route("/administrator-profile/customers/customer/{customerId:int}/calls")]
         [HttpGet]
-        public IActionResult GetCustomerCalls([FromQuery] string userId, [FromQuery] CallParameters parameters)
+        public IActionResult GetCustomerCalls(int customerId, [FromQuery] CallParameters parameters)
         {
-            var calls = _administratorLogic.GetCustomerCalls(userId, parameters);
+            var calls = _administratorLogic.GetCustomerCalls(customerId, parameters);
             return Ok(calls);
         }
 
-        [Route("~/calls")]
-        [HttpGet]
+
+        [ServiceFilter(typeof(ParametersValidationFilterAttribute))]
+        [HttpGet("/administrator-profile/calls")]
         public IActionResult GetCalls([FromQuery] CallParameters parameters)
         {
             var calls = _administratorLogic.GetCalls(parameters);
             return Ok(calls);
         }
 
-        [ServiceFilter(typeof(CallExistenceFilterAttribute))]
-        [Route("~/calls/{id}")]
+
+        [ServiceFilter(typeof(CallExistenceFilterAttribute))]/**/
+        [Route("/administrator-profile/calls/call/{id:int}")]
         [HttpGet]
-        public IActionResult GetCallInfo([FromQuery] uint id)
+        public IActionResult GetCallInfo(int id)
         {
             var call = _administratorLogic.GetCallInfo(id);
             return Ok(call);
         }
 
-        [Route("~/customers/...?")]/**/
-        [HttpPost]
+
+        [HttpPost("/administrator-profile/customers/phonenumber/check")]/**/
         public IActionResult CheckPhoneNumberForExistence(string phoneNumber)
         {
             bool isExist = _administratorLogic.CheckPhoneNumberForExistence(phoneNumber);
             return Ok(isExist);
         }
 
-        [Route("~/customers/{userId}/phonenumber")]
+
+        [ServiceFilter(typeof(CustomerExistenceFilterAttribute))]
+        [Route("/administrator-profile/customers/customer/{customerId:int}/phonenumber/set")]
         [HttpPost]
-        public IActionResult TryToSetNewPhoneNumber(string userId, string phoneNumber)
+        public IActionResult TryToSetNewPhoneNumber(int customerId, string phoneNumber)
         {
-            bool status = _administratorLogic.TryToSetNewPhoneNumber(userId, phoneNumber);
+            bool status = _administratorLogic.TryToSetNewPhoneNumber(customerId, phoneNumber);
             return Ok(status);
         }
 
+
         [ServiceFilter(typeof(CustomerExistenceFilterAttribute))]
-        [Route("~/customer/block")]
+        [Route("/administrator-profile/customers/customer/{customerId:int}/block")]
         [HttpPost]
-        public IActionResult BlockCustomer(string userId)
+        public IActionResult BlockCustomer(int customerId)
         {
-            _administratorLogic.BlockCustomer(userId);
+            _administratorLogic.BlockCustomer(customerId);
             return NoContent();
         }
 
-        [ServiceFilter(typeof(ValidationFilterAttribute))]
-        [Route("~/customers")]
+
+        [ServiceFilter(typeof(DtoValidationFilterAttribute))]
+        [Route("/administrator-profile/customers/create")]
         [HttpPost]
         public IActionResult CreateCustomer([FromBody] CustomerForCreateInAdministratorDto customer)
         {
@@ -112,22 +115,53 @@ namespace TelephoneNetworkProvider.Controllers
             }
             catch (UserExistException e)
             {
-                return BadRequest(e.Message);/*NOOOOOOOOO*/
+                return BadRequest(e.Message);
             }
 
             return NoContent();
         }
 
-        [ServiceFilter(typeof(ValidationFilterAttribute))]
+
+        [ServiceFilter(typeof(DtoValidationFilterAttribute))]
         [ServiceFilter(typeof(CustomerExistenceFilterAttribute))]
-        [Route("~/customers/{id}")]
+        [Route("/administrator-profile/customers/customer/{customerId:int}/update")]
         [HttpPut]
-        public IActionResult UpdateCustomer(string userId, [FromBody] CustomerForUpdateInAdministratorDto customer)
+        public IActionResult UpdateCustomer(int customerId, [FromBody] CustomerForUpdateInAdministratorDto customer)
         {
-            _administratorLogic.UpdateCustomer(userId, customer);
-            return View();
+            _administratorLogic.UpdateCustomer(customerId, customer);
+            return Ok();
         }
 
 
+        [ServiceFilter(typeof(DtoValidationFilterAttribute))]
+        [ServiceFilter(typeof(CustomerExistenceFilterAttribute))]
+        [Route("/administrator-profile/customers/customer/{customerId:int}/delete")]
+        [HttpPost]
+        public IActionResult DeleteCustomer(int customerId, [FromBody] CustomerForUpdateInAdministratorDto customer)
+        {
+            _administratorLogic.DeleteCustomer(customerId);
+            return Ok();
+        }
+
+
+        [ServiceFilter(typeof(ParametersValidationFilterAttribute))]
+        [ServiceFilter(typeof(CustomerExistenceFilterAttribute))]
+        [Route("/administrator-profile/customers/customer/{customerId:int}/messages")]
+        [HttpGet]
+        public IActionResult GetAdministratorMessagesByCustomerUserId(int customerId, [FromQuery] AdministratorMessageParameters parameters)
+        {
+            var messages = _administratorLogic.GetAdministratorMessagesByCustomerId(customerId, parameters);
+            return Ok(messages);
+        }
+
+
+        [ServiceFilter(typeof(CustomerExistenceFilterAttribute))]
+        [Route("/administrator-profile/customers/customer/{customerId:int}/time-pasts-from-last-warn-message")]/*!*/
+        [HttpGet]
+        public IActionResult TimePastsFromLastWarnMessage(int customerId)
+        {
+            DateTime time = _administratorLogic.TimePastsFromLastWarnMessage(customerId);
+            return Ok(time);
+        }
     }
 }

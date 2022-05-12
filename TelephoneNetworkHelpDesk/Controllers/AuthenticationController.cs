@@ -10,10 +10,12 @@ using AutoMapper;
 using Repository;
 using TelephoneNetworkProvider.ActionFilters;
 using BussinessLogic;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TelephoneNetworkProvider.Controllers
 {
-    [Route("/login")]
+    [Route("login")]
+    [AllowAnonymous]
     public class AuthenticationController : Controller
     {
         private IAuthenticationLogic _authenticationLogic;
@@ -24,22 +26,23 @@ namespace TelephoneNetworkProvider.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetLogInPage()
+        public IActionResult Index()
         {
-            return View();
+            return Ok("yeah");
         }
 
-        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        [ServiceFilter(typeof(DtoValidationFilterAttribute))]
         [HttpPost]
         public async Task<IActionResult> Authentication(UserForAuthenticationDto user)
         {
-            bool status = await _authenticationLogic.ValidateUser(user);
+            (bool status, string role) = await _authenticationLogic.ValidateUser(user);
             if (!status)
             {
                 return BadRequest();//NO! (I don't remember)
-            } 
+            }
 
-            return View();
+            var jwtToken = await _authenticationLogic.CreateToken();
+            return Ok(jwtToken);
         }
     }
 }
