@@ -7,50 +7,65 @@ using AutoMapper;
 using Entities.DataTransferObjects;
 using Entities.Models;
 using Entities.RequestFeatures;
-using Repository;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components;
+using Repository.CustomerRepository;
 
 namespace BussinessLogic
 {
-    public class CustomerLogic : GuestLogic, ICustomerLogic
+    public class CustomerLogic : ICustomerLogic
     {
         private ICustomerManager _customerManager;
+        //private ICustomerDataAcquisitionLogic<CustomerForReadInCustomerDto> _customerDataAcquisitionLogic;
         private IMapper _mapper;
-        private IGuestManager _guestManager;
 
-        public CustomerLogic(ICustomerManager customerManager, IMapper mapper, IGuestManager guestManager)
-            : base(guestManager)
+        public CustomerLogic(ICustomerManager customerManager, IMapper mapper)
         {
             _customerManager = customerManager;
             _mapper = mapper;
-            _guestManager = guestManager;
         }
 
-        public void UpdateCustomerInfo(CustomerForUpdateInCustomerDto customerDto)
+        public void UpdateCustomerInfo(int customerId, CustomerForUpdateInCustomerDto customerDto)
         {
-
+            var customer = _mapper.Map<Customer>(customerDto);
+            customer.Id = customerId;
+            _customerManager.Customer.UpdateCustomer(customer);
         }
 
-        public void ReplenishTheBalance(Decimal currency)
+        public void ReplenishTheBalance(int customerId, Decimal currency)
         {
-
+            if (currency < 0.0m || currency > 50000.0m)
+                throw new ArgumentOutOfRangeException("Currency should be between 0.0 and 50000.0");
+            var customer = _customerManager.Customer.GetCustomer(customerId, true);
+            customer.MoneyBalance += currency;
         }
 
-        public IEnumerable<Call> GetCalls(CallParameters parameters)
+        public IEnumerable<CallForReadInCustomerDto> GetCalls(int customerId, CallParameters parameters)
         {
-            return 
+            var calls = _customerManager.Calls.GetCalls(customerId, parameters);
+            var callsDto = _mapper.Map<IEnumerable<CallForReadInCustomerDto>>(calls);
+            return callsDto;
         }
 
-        public CustomerForReadInCustomerDto GetCustomerInfo(string userId)
+        public CallForReadInCustomerDto GetCall(int id)
         {
-            Customer customer = _customerManager.Customer.GetCustomer(userId, false);
-            CustomerForReadInCustomerDto customerDto = _mapper.Map<CustomerForReadInCustomerDto>(customer);
+            var call = _customerManager.Calls.GetCall(id);
+            var callDto = _mapper.Map<CallForReadInCustomerDto>(call);
+            return callDto;
+        }
+
+        public CustomerForReadInCustomerDto GetCustomerInfo(int customerId)
+        {
+            var customer = _customerManager.Customer.GetCustomer(customerId, false);
+            var customerDto = _mapper.Map<CustomerForReadInCustomerDto>(customer);
             return customerDto;
         }
 
-        public IEnumerable<Customer> GetCustomers(CustomerParameters parameters)
+        public IEnumerable<CustomerForReadInCustomerDto> GetCustomers(CustomerParameters parameters)
         {
-            var customers = _guestManager.Customers.GetCustomers(parameters);
-            return customers;
+            var customers = _customerManager.Customer.GetCustomers(parameters);
+            var customersDto = _mapper.Map<IEnumerable<CustomerForReadInCustomerDto>>(customers);
+            return customersDto;
         }
     }
 }

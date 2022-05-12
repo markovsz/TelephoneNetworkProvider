@@ -12,18 +12,21 @@ namespace BussinessLogic
 {
     public interface IAdministratorLogic
     {
-        IEnumerable<Customer> GetCustomers(CustomerParameters parameters);
-        bool CheckCustomer(string userId);
-        Customer GetCustomerInfo(string userId);
-        IEnumerable<Call> GetCustomerCalls(string userId, CallParameters parameters);
-        IEnumerable<Call> GetCalls(CallParameters parameters);
-        bool CheckCall(uint id);
-        Call GetCallInfo(uint id);
+        bool CheckCustomer(int customerId);
+        IEnumerable<CustomerForReadInAdministratorDto> GetCustomers(CustomerParameters parameters);
+        CustomerForReadInAdministratorDto GetCustomerInfo(int customerId);
+        IEnumerable<CallForReadInAdministratorDto> GetCustomerCalls(int customerId, CallParameters parameters);
+        IEnumerable<CallForReadInAdministratorDto> GetCalls(CallParameters parameters);
+        bool CheckCall(int id);
+        CallForReadInAdministratorDto GetCallInfo(int id);
         void CreateCustomer(CustomerForCreateInAdministratorDto customerDto);
-        void UpdateCustomer(string userId, CustomerForUpdateInAdministratorDto customer);
-        void SendMessage(string userId, AdministratorMessageForCreateDto messageDto);
+        void UpdateCustomer(int customerId, CustomerForUpdateInAdministratorDto customer);
+        void DeleteCustomer(int customerId);
+        void SendMessage(int customerId, AdministratorMessageForCreateInAdministratorDto messageDto);
+        DateTime TimePastsFromLastWarnMessage(int customerId);
+        IEnumerable<AdministratorMessageForReadInAdministratorDto> GetAdministratorMessagesByCustomerId(int customerId, AdministratorMessageParameters parameters);
         bool CheckPhoneNumberForExistence(string phoneNumber);
-        bool TryToSetNewPhoneNumber(string userId, string phoneNumber);
-        void BlockCustomer(string userId);
+        bool TryToSetNewPhoneNumber(int customerId, string phoneNumber);
+        void BlockCustomer(int customerId);
     }
 }

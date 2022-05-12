@@ -1,34 +1,63 @@
-﻿using Entities.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Entities.Models;
+using Microsoft.AspNetCore.Identity;
+using Repository;
+using BussinessLogic.Exceptions;
 
 namespace BussinessLogic
 {
     public class UserManipulationLogic : IUserManipulationLogic
     {
-        public 
+        private UserManager<User> _userManager;
 
-        public UserManipulationLogic()
+        public UserManipulationLogic(UserManager<User> userManager)
         {
-
+            _userManager = userManager;
         }
 
-        public void CreateUser(User user)
+        public async Task<User> CreateUser(string login, string password, string role)
         {
-            throw new NotImplementedException();
+            //TODO
+            User user = new User(login);
+            user.UserName = login;
+            var result = await _userManager.CreateAsync(user, password);
+            if (!result.Succeeded)
+            {
+                var error = result.Errors.FirstOrDefault();
+                throw new InvalidUserDataException($"{error.Code} + {error.Description}");
+            }
+
+            result = await _userManager.AddToRoleAsync(user, role);
+            if (!result.Succeeded)
+            {
+                var error = result.Errors.FirstOrDefault();
+                throw new InvalidUserDataException($"{error.Code} + {error.Description}");
+            }
+            return user;
         }
 
-        public void DeleteUser(User user)
+        public async Task DeleteUser(User user)
         {
-            throw new NotImplementedException();
+            var result = await _userManager.DeleteAsync(user);
+            if (!result.Succeeded)
+            {
+                var error = result.Errors.FirstOrDefault();
+                throw new InvalidUserDataException($"{error.Code} + {error.Description}");
+            }
         }
 
-        public void UpdateUser(User user)
+        public async Task UpdateUser(User user)
         {
-            throw new NotImplementedException();
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                var error = result.Errors.FirstOrDefault();
+                throw new InvalidUserDataException($"{error.Code} + {error.Description}");
+            }
         }
     }
 }

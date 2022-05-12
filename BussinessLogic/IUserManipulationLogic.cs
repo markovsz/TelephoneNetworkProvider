@@ -9,8 +9,8 @@ namespace BussinessLogic
 {
     public interface IUserManipulationLogic
     {
-        void CreateUser(User user);
-        void UpdateUser(User user);
-        void DeleteUser(User user);
+        Task<User> CreateUser(string login, string password, string role);
+        Task UpdateUser(User user);
+        Task DeleteUser(User user);
     }
 }

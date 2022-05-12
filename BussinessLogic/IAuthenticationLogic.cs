@@ -9,6 +9,7 @@ namespace BussinessLogic
 {
     public interface IAuthenticationLogic
     {
-        Task<bool> ValidateUser(UserForAuthenticationDto user);
+        Task<(bool, string)> ValidateUser(UserForAuthenticationDto user);
+        Task<string> CreateToken();
     }
 }

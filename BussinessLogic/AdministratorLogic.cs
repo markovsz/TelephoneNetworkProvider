@@ -4,106 +4,126 @@ using System.Linq;
 using Entities.DataTransferObjects;
 using Entities.Models;
 using Entities.RequestFeatures;
-using Repository;
+using Repository.AdministratorRepository;
 using AutoMapper;
 using BussinessLogic.Exceptions;
+using System.Threading.Tasks;
 
 namespace BussinessLogic
 {
     public class AdministratorLogic : IAdministratorLogic
     {
-        private IAuthenticationLogic _authenticationLogic;
         private IUserManipulationLogic _userManipulationLogic;
         private IAdministratorManager _administratorManager;
         private IMapper _mapper;
 
-        //public delegate void Message(string userId);
-        //private event Message SendMessageEvent;
 
-        public AdministratorLogic(IAdministratorManager administratorManager, IAuthenticationLogic authenticationLogic, IUserManipulationLogic userManipulationLogic, IMapper mapper)
+        public AdministratorLogic(IAdministratorManager administratorManager, IUserManipulationLogic userManipulationLogic, IMapper mapper)
         {
             _administratorManager = administratorManager;
             _userManipulationLogic = userManipulationLogic;
-            _authenticationLogic = authenticationLogic;
             _mapper = mapper;
         }
 
-
-        public bool CheckCall(uint id)
+        public bool CheckCall(int id)
         {
             return _administratorManager.Calls.GetCall(id) is not null;
         }
 
-        public bool CheckCustomer(string userId)
+        public bool CheckCustomer(int customerId)
         {
-            return _administratorManager.Customers.GetCustomerByUserId(userId, false) is not null;
+            return _administratorManager.Customers.GetCustomerInfo(customerId, false) is not null;
         }
 
-        public Call GetCallInfo(uint id)
+        public CallForReadInAdministratorDto GetCallInfo(int id)
         {
-            return _administratorManager.Calls.GetCall(id);
+            var call = _administratorManager.Calls.GetCall(id);
+            var callDto = _mapper.Map<CallForReadInAdministratorDto>(call);
+            return callDto;
         }
 
-        public IEnumerable<Call> GetCalls(CallParameters parameters)
+        public IEnumerable<CallForReadInAdministratorDto> GetCalls(CallParameters parameters)
         {
-            return _administratorManager.Calls.GetCalls(parameters);
+            var call = _administratorManager.Calls.GetCalls(parameters);
+            var callDto = _mapper.Map<IEnumerable<CallForReadInAdministratorDto>>(call);
+            return callDto;
         }
 
-        public IEnumerable<Call> GetCustomerCalls(string userId, CallParameters parameters)
+        public IEnumerable<CallForReadInAdministratorDto> GetCustomerCalls(int customerId, CallParameters parameters)
         {
-            return _administratorManager.Calls.GetCustomerCalls(userId, parameters);
+            var call = _administratorManager.Calls.GetCustomerCalls(customerId, parameters);
+            var callDto = _mapper.Map<IEnumerable<CallForReadInAdministratorDto>>(call);
+            return callDto;
         }
 
-        public Customer GetCustomerInfo(string userId)
+        public CustomerForReadInAdministratorDto GetCustomerInfo(int customerId)
         {
-            return _administratorManager.Customers.GetCustomerByUserId(userId, false);
+            var customer = _administratorManager.Customers.GetCustomerInfo(customerId, false);
+            var customerDto = _mapper.Map<CustomerForReadInAdministratorDto>(customer);
+            return customerDto;
         }
 
-        public IEnumerable<Customer> GetCustomers(CustomerParameters parameters)
+        public IEnumerable<CustomerForReadInAdministratorDto> GetCustomers(CustomerParameters parameters)
         {
-            return _administratorManager.Customers.GetCustomers(parameters, false);
+            var customers = _administratorManager.Customers.GetCustomers(parameters, false);
+            var customersDto = _mapper.Map<IEnumerable<CustomerForReadInAdministratorDto>>(customers);
+            return customersDto;
         }
 
-        public DateTime TimePastsFromLastWarningMessage(string userId)
+        public DateTime TimePastsFromLastWarnMessage(int customerId)
         {
-            var customer = _administratorManager.Customers.GetCustomerByUserId(userId, false);
-            var message = _administratorManager.Messages.GetCustomerWarningMessagesFromTime(userId, customer.LastBlockTime)
+            var customer = _administratorManager.Customers.GetCustomerInfo(customerId, false);
+            var message = _administratorManager.Messages.GetCustomerWarningMessagesFromTime(customerId, customer.LastBlockTime)
                 .OrderByDescending(m => m.SendingTime)
                 .FirstOrDefault();
+            if (message is null)
+                return new DateTime(1, 0, 0);
             return message.SendingTime;
         }
 
-        public void SendMessage(string userId, AdministratorMessageForCreateDto messageDto)
+        public IEnumerable<AdministratorMessageForReadInAdministratorDto> GetAdministratorMessagesByCustomerId(int customerId, AdministratorMessageParameters parameters)
         {
-            var customer = _administratorManager.Customers.GetCustomerByUserId(userId, true);
-            var messages = _administratorManager.Messages.GetCustomerWarningMessagesFromTime(userId, customer.LastBlockTime);
-            if (customer.IsBlocked) return;
+            var messages = _administratorManager.Messages.GetCustomerMessages(customerId, parameters);
+            var messagesDto = _mapper.Map<IEnumerable<AdministratorMessageForReadInAdministratorDto>>(messages);
+            return messagesDto;
+        }
+
+        public void SendMessage(int customerId, AdministratorMessageForCreateInAdministratorDto messageDto)
+        {
+            var customer = _administratorManager.Customers.GetCustomerInfo(customerId, true);
+            //var messages = _administratorManager.Messages.GetCustomerWarningMessagesFromTime(customerId, customer.LastBlockTime);
+            if (customer.IsBlocked)
+                throw new CustomerBlockedException("Customer is blocked and cannot catch the messages");
+
+            if (TimePastsFromLastWarnMessage(customerId).CompareTo(new DateTime(0, 0, 1/*1 day*/)) >= 0)
+                throw new SendMessageException("Didn't past enough time to send a new message");
 
             AdministratorMessage message = new AdministratorMessage();
-            message.UserId = customer.UserId;
+            message.CustomerId = customer.Id;
             message.Status = messageDto.Status;
             message.Text = messageDto.Text;
             message.SendingTime = DateTime.Now;
             _administratorManager.Messages.CreateMessage(message);
-            if (message.Status.Equals("warning"))
-            {
-            }
         }
 
-        public void CreateCustomer(CustomerForCreateInAdministratorDto customerDto)
+        public async Task CreateCustomer(CustomerForCreateInAdministratorDto customerDto)
         {
-            if(_administratorManager.Customers.GetCustomerByUserId(customerDto.UserId, false) is null)
+
+            //bool isExist = _administratorManager.Customers.CheckCustomerByUserId();
+            if(_administratorManager.Customers.FindCustomerByPhoneNumber(customerDto.PhoneNumber, false) is not null)
             {
                 throw new UserExistException("user is already existing");
             }
             Customer customer = _mapper.Map<Customer>(customerDto);
             customer.MoneyBalance = 0;
             customer.RegistrationDate = DateTime.Now;
-            customer.IsPhoneNumberHided = false;
+            customer.IsPhoneNumberHided = customerDto.IsPhoneNumberHidedStr == "true" ? true : false;
             customer.IsBlocked = false;
-            User user = _mapper.Map<User>(customerDto);
-            _userManipulationLogic.CreateUser(user);
+            var user = await _userManipulationLogic.CreateUser(customerDto.Login, customerDto.Password, "Customer");
+
+            customer.UserId = user.Id;
             _administratorManager.Customers.AddCustomer(customer);
+            _administratorManager.Save();
         }
 
         public bool CheckPhoneNumberForExistence(string phoneNumber)
@@ -111,31 +131,37 @@ namespace BussinessLogic
             return _administratorManager.Customers.FindCustomerByPhoneNumber(phoneNumber, false) is not null;
         }
 
-        public bool TryToSetNewPhoneNumber(string userId, string phoneNumber)
+        public bool TryToSetNewPhoneNumber(int customerId, string phoneNumber)
         {
             bool isAny = CheckPhoneNumberForExistence(phoneNumber);
-            _administratorManager.Customers.GetCustomerByUserId(userId, true).PhoneNumber = phoneNumber;
+            if (!isAny)
+            {
+                _administratorManager.Customers.GetCustomerInfo(customerId, true).PhoneNumber = phoneNumber;
+                _administratorManager.Save();
+            }
             return !isAny;
         }
 
-        public void BlockCustomer(string userId)
+        public void BlockCustomer(int customerId)
         {
-            var customer = _administratorManager.Customers.GetCustomerByUserId(userId, true);
+            var customer = _administratorManager.Customers.GetCustomerInfo(customerId, true);
+
             if (customer.IsBlocked) return;
-            var messages = _administratorManager.Messages.GetCustomerWarningMessagesFromTime(userId, customer.LastBlockTime);
+            var messages = _administratorManager.Messages.GetCustomerWarningMessagesFromTime(customerId, customer.LastBlockTime);
 
             if (messages.Count() >= 3) customer.IsBlocked = true;
+            _administratorManager.Save();
         }
 
-        public void DeleteCustomer(string userId)
+        public void DeleteCustomer(int customerId)
         {
-            _administratorManager.Customers.DeleteCustomerByUserId(userId);
+            _administratorManager.Customers.DeleteCustomerByUserId(customerId);
         }
 
-        public void UpdateCustomer(string userId, CustomerForUpdateInAdministratorDto customerDto)
+        public void UpdateCustomer(int customerId, CustomerForUpdateInAdministratorDto customerDto)
         {
             var customer = _mapper.Map<Customer>(customerDto);
-            customer.UserId = userId;
+            customer.Id = customerId;
             _administratorManager.Customers.UpdateCustomer(customer);
         }
     }
