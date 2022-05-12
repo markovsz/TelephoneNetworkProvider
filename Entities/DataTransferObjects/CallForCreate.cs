@@ -11,11 +11,11 @@ namespace Entities.DataTransferObjects
     public abstract class CallForCreate
     {
         [Required]
-        public uint CallerId { get; set; }
+        public int CallerId { get; set; }
 
 
         [Required]
-        public uint CalledById { get; set; }
+        public int CalledById { get; set; }
 
 
         [Required]

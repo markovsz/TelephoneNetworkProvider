@@ -35,7 +35,7 @@ namespace Entities.DataTransferObjects
 
 
         [Required]
-        public bool IsPhoneNumberHided { get; set; }
+        public string IsPhoneNumberHidedStr { get; set; } //json convertation problem
 
 
         [Required]

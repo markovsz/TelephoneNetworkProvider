@@ -7,15 +7,15 @@ namespace Entities.DataTransferObjects
     {
         [Required]
         [Key]
-        public uint Id { get; set; }
+        public int Id { get; set; }
 
 
         [Required]
-        public uint CallerId { get; set; }
+        public int CallerId { get; set; }
 
 
         [Required]
-        public uint CalledById { get; set; }
+        public int CalledById { get; set; }
 
 
         [Required]

@@ -10,7 +10,7 @@ namespace Entities.DataTransferObjects
     public abstract class AdministratorMessageForCreate
     {
         [Required]
-        public uint CustomerId { get; set; }
+        public int CustomerId { get; set; }
 
 
         [Required]

@@ -12,22 +12,20 @@ namespace Entities.Models
     {
         [Required]
         [Key]
-        public uint Id { get; set; }
+        public int Id { get; set; }
+
+        
+        public int CallerId { get; set; }
 
 
-        [Required]
-        public uint CallerId { get; set; }
-
-
-        [ForeignKey("CallerId")]
+        //[ForeignKey("CallerId")]
         public Customer Caller { get; set; }
 
 
-        [Required]
-        public uint CalledById { get; set; }
+        public int CalledById { get; set; }
 
 
-        [ForeignKey("CalledById")]
+        //[ForeignKey("CalledById")]
         public Customer CalledBy { get; set; }
 
 
@@ -39,5 +37,7 @@ namespace Entities.Models
         [Required]
         [Range(typeof(DateTime), "2020-01-01 00:00:00", "2999-12-31 23:59:59")]
         public DateTime CallEndTime { get; set; }
+
+        //public ICollection<Customer> Caller
     }
 }

@@ -12,11 +12,11 @@ namespace Entities.Models
     {
         [Required]
         [Key]
-        public uint Id { get; set; }
+        public int Id { get; set; }
 
 
         [Required]
-        public uint CustomerId { get; set; }
+        public int CustomerId { get; set; }
 
 
         [Required]

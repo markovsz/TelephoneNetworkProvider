@@ -12,11 +12,11 @@ namespace Entities.Models
     {
         [Required]
         [Key]
-        public uint Id { get; set; }
+        public int Id { get; set; }
 
 
         [Required]
-        [MaxLength(20)]
+        [MaxLength(450)]
         public string UserId { get; set; }
 
 
@@ -69,6 +69,11 @@ namespace Entities.Models
         
 
         [Required]
+        //[Column(TypeName = "decimal(18,4)")]
         public Decimal MoneyBalance { get; set; }
+
+        public ICollection<Call> InitiatedCalls { get; set; }
+        public ICollection<Call> ReceivedCalls { get; set; }
+        //public ICollection<AdministratorMessage> CustomerMessages { get; set; }
     }
 }

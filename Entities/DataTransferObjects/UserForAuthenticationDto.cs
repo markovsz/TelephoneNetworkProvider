@@ -11,7 +11,7 @@ namespace Entities.DataTransferObjects
     {
         [Required]
         [MaxLength(20)]
-        public string UserId { get; set; }
+        public string Login { get; set; }
 
         [Required]
         [MaxLength(40)]
