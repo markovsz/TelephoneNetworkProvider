@@ -21,18 +21,18 @@ namespace Repository.OperatorRepository
             .CallParametersHandler(parameters)
             .ToList();
 
-        public IEnumerable<Call> GetCustomerCalls(uint customerId, CallParameters parameters) =>
+        public IEnumerable<Call> GetCustomerCalls(int customerId, CallParameters parameters) =>
             FindByCondition(c => c.CallerId.Equals(customerId) || c.CalledBy.Equals(customerId), false)
             .CallParametersHandler(parameters)
             .ToList();
 
-        public Call GetCallInfo(uint id, bool trackChanges) =>
+        public Call GetCallInfo(int id, bool trackChanges) =>
             FindByCondition(c => c.Id.Equals(id), trackChanges)
             .FirstOrDefault();
 
         public void CreateCall(Call call) => Create(call);
 
-        public void DeleteCallById(uint id) =>
+        public void DeleteCallById(int id) =>
             Delete(FindByCondition(c => c.Id.Equals(id), true).FirstOrDefault());
 
     }

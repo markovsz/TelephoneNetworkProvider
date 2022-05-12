@@ -11,6 +11,6 @@ namespace Repository.GuestRepository
     public interface ICustomerRepositoryForGuest
     {
         IEnumerable<Customer> GetCustomers(CustomerParameters parameters);
-        Customer GetCustomerInfo(uint customerId);
+        Customer GetCustomerInfo(int customerId);
     }
 }

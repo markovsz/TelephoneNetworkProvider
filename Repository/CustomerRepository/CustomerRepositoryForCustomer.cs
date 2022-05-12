@@ -21,7 +21,7 @@ namespace Repository.CustomerRepository
             _customerDataAcquisitionRepository = customerDataAcquisitionRepository;
         }
 
-        public Customer GetCustomer(uint customerId, bool trackChanges) =>
+        public Customer GetCustomer(int customerId, bool trackChanges) =>
             _customerDataAcquisitionRepository.GetCustomerInfo(customerId, trackChanges);
 
         public IEnumerable<Customer> GetCustomers(CustomerParameters parameters) =>
@@ -29,7 +29,7 @@ namespace Repository.CustomerRepository
             
         public void UpdateCustomer(Customer customer) => Update(customer);
         public void DeleteCustomer(Customer customer) => Delete(customer);
-        public void DeleteCustomerByUserId(uint customerId) => 
+        public void DeleteCustomerByUserId(int customerId) => 
             Delete(FindByCondition(c => c.Id.Equals(customerId), true).FirstOrDefault());
 
     }

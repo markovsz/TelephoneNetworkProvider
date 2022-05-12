@@ -11,6 +11,6 @@ namespace Repository.OperatorRepository
     public interface ICustomerRepositoryForOperator
     {
         IEnumerable<Customer> GetCustomers(CustomerParameters parameters);
-        Customer GetCustomerInfo(uint customerId);
+        Customer GetCustomerInfo(int customerId);
     }
 }

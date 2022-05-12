@@ -11,7 +11,7 @@ namespace Repository.CustomerRepository
 {
     public interface ICallRepositoryForCustomer
     {
-        IEnumerable<Call> GetCalls(uint customerId, CallParameters parameters);
-        Call GetCall(uint id);
+        IEnumerable<Call> GetCalls(int customerId, CallParameters parameters);
+        Call GetCall(int id);
     }
 }

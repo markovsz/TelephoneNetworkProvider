@@ -11,6 +11,6 @@ namespace Repository.CustomerAcquisitionRepository
     public interface ICustomerDataAcquisitionRepository
     {
         IEnumerable<Customer> GetCustomers(CustomerParameters parameters);
-        Customer GetCustomerInfo(uint customerId, bool trackChanges);
+        Customer GetCustomerInfo(int customerId, bool trackChanges);
     }
 }

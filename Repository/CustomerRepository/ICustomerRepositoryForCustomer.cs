@@ -10,10 +10,10 @@ namespace Repository.CustomerRepository
 {
     public interface ICustomerRepositoryForCustomer
     {
-        Customer GetCustomer(uint customerId, bool trackChanges);
+        Customer GetCustomer(int customerId, bool trackChanges);
         IEnumerable<Customer> GetCustomers(CustomerParameters parameters);
         void UpdateCustomer(Customer customer);
         void DeleteCustomer(Customer customer);
-        void DeleteCustomerByUserId(uint customerId);
+        void DeleteCustomerByUserId(int customerId);
     }
 }

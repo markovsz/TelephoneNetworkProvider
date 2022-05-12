@@ -20,7 +20,7 @@ namespace Repository.GuestRepository
             _customerDataAcquisitionRepository = customerDataAcquisitionRepository;
         }
 
-        public Customer GetCustomerInfo(uint customerId) =>
+        public Customer GetCustomerInfo(int customerId) =>
             _customerDataAcquisitionRepository.GetCustomerInfo(customerId, false);
 
         public IEnumerable<Customer> GetCustomers(CustomerParameters parameters) =>

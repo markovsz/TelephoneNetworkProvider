@@ -16,7 +16,7 @@ namespace Repository.AdministratorRepository
         {
         }
 
-        public Call GetCall(uint id) =>
+        public Call GetCall(int id) =>
             FindByCondition(c => c.Id.Equals(id), false)
             .FirstOrDefault();
 
@@ -25,7 +25,7 @@ namespace Repository.AdministratorRepository
             .CallParametersHandler(parameters)
             .ToList();
 
-        public IEnumerable<Call> GetCustomerCalls(uint customerId, CallParameters parameters) =>
+        public IEnumerable<Call> GetCustomerCalls(int customerId, CallParameters parameters) =>
             FindByCondition(c => c.Caller.Id.Equals(customerId) || c.CalledBy.Id.Equals(customerId), false)
             .CallParametersHandler(parameters)
             .ToList();

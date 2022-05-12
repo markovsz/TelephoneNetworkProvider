@@ -16,9 +16,9 @@ namespace Repository.CustomerAcquisitionRepository
         {
         }
 
-        public Customer GetCustomerInfo(uint customerId, bool trackChanges)
+        public Customer GetCustomerInfo(int customerId, bool trackChanges)
         {
-            return FindByCondition(c => c.UserId.Equals(customerId), trackChanges)
+            return FindByCondition(c => c.Id.Equals(customerId), trackChanges)
                 .FirstOrDefault();
         }
 

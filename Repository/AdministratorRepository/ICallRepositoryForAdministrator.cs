@@ -11,8 +11,8 @@ namespace Repository.AdministratorRepository
 {
     public interface ICallRepositoryForAdministrator
     {
-        Call GetCall(uint id);
+        Call GetCall(int id);
         IEnumerable<Call> GetCalls(CallParameters parameters);
-        IEnumerable<Call> GetCustomerCalls(uint customerId, CallParameters parameters);
+        IEnumerable<Call> GetCustomerCalls(int customerId, CallParameters parameters);
     }
 }

@@ -25,7 +25,7 @@ namespace Repository.AdministratorRepository
         public IEnumerable<Customer> GetCustomers(CustomerParameters parameters, bool trackChanges) =>
             _customerDataAcquisitionRepository.GetCustomers(parameters);
 
-        public Customer GetCustomerInfo(uint customerId, bool trackChanges) =>
+        public Customer GetCustomerInfo(int customerId, bool trackChanges) =>
             _customerDataAcquisitionRepository.GetCustomerInfo(customerId, trackChanges);
 
         public void AddCustomer(Customer customer) => Create(customer);
@@ -34,7 +34,7 @@ namespace Repository.AdministratorRepository
 
         public void DeleteCustomer(Customer customer) => Delete(customer);
 
-        public void DeleteCustomerByUserId(uint customerId) =>
+        public void DeleteCustomerByUserId(int customerId) =>
             Delete(GetCustomerInfo(customerId, true));
         
         public Customer FindCustomerByPhoneNumber(string phoneNumber, bool trackChanges) =>

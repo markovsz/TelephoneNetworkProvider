@@ -23,7 +23,7 @@ namespace Repository.OperatorRepository
         public IEnumerable<Customer> GetCustomers(CustomerParameters parameters) =>
             _customerDataAcquisitionRepository.GetCustomers(parameters);
 
-        public Customer GetCustomerInfo(uint customerId) =>
+        public Customer GetCustomerInfo(int customerId) =>
             _customerDataAcquisitionRepository.GetCustomerInfo(customerId, false);
     }
 }

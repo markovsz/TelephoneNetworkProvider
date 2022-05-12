@@ -81,7 +81,8 @@ namespace Repository
             }
 
             int customersCount = elements.Count();
-            if (parameters.PageNumber < 1 || parameters.PageNumber > (customersCount + pageSize - 1) / pageSize)
+            int customersCountOffset = (customersCount == 0 ? 1 : 0);
+            if (parameters.PageNumber < 1 || parameters.PageNumber > (customersCount + pageSize - 1 + customersCountOffset) / pageSize)
             {
                 throw new ArgumentOutOfRangeException();//PageNumberOutOfRangeException();
             }

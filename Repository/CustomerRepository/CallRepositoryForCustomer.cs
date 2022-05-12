@@ -16,11 +16,11 @@ namespace Repository.CustomerRepository
         {
         }
 
-        public Call GetCall(uint id) =>
+        public Call GetCall(int id) =>
             FindByCondition(c => c.Id.Equals(id), false)
             .FirstOrDefault();
 
-        public IEnumerable<Call> GetCalls(uint customerId, CallParameters parameters) =>
+        public IEnumerable<Call> GetCalls(int customerId, CallParameters parameters) =>
             FindByCondition(c => c.CallerId.Equals(customerId) || c.CalledBy.Equals(customerId), false)
             .CallParametersHandler(parameters)
             .ToList();
