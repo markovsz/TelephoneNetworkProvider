@@ -10,7 +10,7 @@ namespace Repository.CustomerAcquisitionRepository
 {
     public interface ICustomerDataAcquisitionRepository
     {
-        IEnumerable<Customer> GetCustomers(CustomerParameters parameters);
-        Customer GetCustomerInfo(int customerId, bool trackChanges);
+        Task<IEnumerable<Customer>> GetCustomersAsync(CustomerParameters parameters);
+        Task<Customer> GetCustomerInfoAsync(int customerId, bool trackChanges);
     }
 }

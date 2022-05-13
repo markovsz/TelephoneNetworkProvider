@@ -10,6 +10,6 @@ namespace Repository.CustomerRepository
 {
     public interface IAdministratorMessageRepositoryForCustomer
     {
-        IEnumerable<AdministratorMessage> GetMessages(int customerId, AdministratorMessageParameters parameters);
+        Task<IEnumerable<AdministratorMessage>> GetMessagesAsync(int customerId, AdministratorMessageParameters parameters);
     }
 }

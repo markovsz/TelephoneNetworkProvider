@@ -10,6 +10,6 @@ namespace Repository.OperatorRepository
     {
         ICallRepositoryForOperator Calls { get; }
         ICustomerRepositoryForOperator Customers { get; }
-        void Save();
+        Task SaveAsync();
     }
 }

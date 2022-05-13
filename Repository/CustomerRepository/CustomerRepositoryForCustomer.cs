@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Entities;
 using Entities.Models;
 using Entities.RequestFeatures;
+using Microsoft.EntityFrameworkCore;
 using Repository.CustomerAcquisitionRepository;
 
 namespace Repository.CustomerRepository
@@ -21,16 +22,16 @@ namespace Repository.CustomerRepository
             _customerDataAcquisitionRepository = customerDataAcquisitionRepository;
         }
 
-        public Customer GetCustomer(int customerId, bool trackChanges) =>
-            _customerDataAcquisitionRepository.GetCustomerInfo(customerId, trackChanges);
+        public async Task<Customer> GetCustomerAsync(int customerId, bool trackChanges) =>
+            await _customerDataAcquisitionRepository.GetCustomerInfoAsync(customerId, trackChanges);
 
-        public IEnumerable<Customer> GetCustomers(CustomerParameters parameters) =>
-            _customerDataAcquisitionRepository.GetCustomers(parameters);
+        public async Task<IEnumerable<Customer>> GetCustomersAsync(CustomerParameters parameters) =>
+            await _customerDataAcquisitionRepository.GetCustomersAsync(parameters);
             
         public void UpdateCustomer(Customer customer) => Update(customer);
         public void DeleteCustomer(Customer customer) => Delete(customer);
-        public void DeleteCustomerByUserId(int customerId) => 
-            Delete(FindByCondition(c => c.Id.Equals(customerId), true).FirstOrDefault());
+        public async Task DeleteCustomerByUserIdAsync(int customerId) => 
+            Delete(await FindByCondition(c => c.Id.Equals(customerId), true).FirstOrDefaultAsync());
 
     }
 }

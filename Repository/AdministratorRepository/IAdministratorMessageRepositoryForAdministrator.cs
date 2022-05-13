@@ -10,12 +10,10 @@ namespace Repository.AdministratorRepository
 {
     public interface IAdministratorMessageRepositoryForAdministrator
     {
-        IEnumerable<AdministratorMessage> GetMessage(int id);
-        IEnumerable<AdministratorMessage> GetCustomerMessages(int customerId, AdministratorMessageParameters parameters);
-        IEnumerable<AdministratorMessage> GetCustomerWarningMessagesFromTime(int customerId, DateTime startTime);
-        void CreateMessage(AdministratorMessage message);
-        void DeleteMessage(int id);
-        //IEnumerable<AdministratorMessage> GetAdministratorMessagesByCustomerId(int customerId, AdministratorMessageParameters parameters);
-
+        Task<IEnumerable<AdministratorMessage>> GetMessageAsync(int id);
+        Task<IEnumerable<AdministratorMessage>> GetCustomerMessagesAsync(int customerId, AdministratorMessageParameters parameters);
+        Task<IEnumerable<AdministratorMessage>> GetCustomerWarningMessagesFromTimeAsync(int customerId, DateTime startTime);
+        Task CreateMessageAsync(AdministratorMessage message);
+        Task DeleteMessageAsync(int id);
     }
 }

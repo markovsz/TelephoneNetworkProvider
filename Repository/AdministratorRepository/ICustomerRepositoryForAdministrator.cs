@@ -11,12 +11,12 @@ namespace Repository.AdministratorRepository
 {
     public interface ICustomerRepositoryForAdministrator
     {
-        IEnumerable<Customer> GetCustomers(CustomerParameters parameters, bool trackChanges);
-        Customer GetCustomerInfo(int customerId, bool trackChanges);
-        void AddCustomer(Customer customer);
+        Task<IEnumerable<Customer>> GetCustomersAsync(CustomerParameters parameters, bool trackChanges);
+        Task<Customer> GetCustomerInfoAsync(int customerId, bool trackChanges);
+        Task AddCustomerAsync(Customer customer);
         void UpdateCustomer(Customer customer);
         void DeleteCustomer(Customer customer);
-        void DeleteCustomerByUserId(int customerId);
-        Customer FindCustomerByPhoneNumber(string phoneNumber, bool trackChanges);
+        Task DeleteCustomerByUserIdAsync(int customerId);
+        Task<Customer> FindCustomerByPhoneNumberAsync(string phoneNumber, bool trackChanges);
     }
 }

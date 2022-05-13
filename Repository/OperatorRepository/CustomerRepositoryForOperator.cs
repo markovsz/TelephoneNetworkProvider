@@ -20,10 +20,10 @@ namespace Repository.OperatorRepository
             _customerDataAcquisitionRepository = customerDataAcquisitionRepository;
         }
 
-        public IEnumerable<Customer> GetCustomers(CustomerParameters parameters) =>
-            _customerDataAcquisitionRepository.GetCustomers(parameters);
+        public async Task<IEnumerable<Customer>> GetCustomers(CustomerParameters parameters) =>
+            await _customerDataAcquisitionRepository.GetCustomersAsync(parameters);
 
-        public Customer GetCustomerInfo(int customerId) =>
-            _customerDataAcquisitionRepository.GetCustomerInfo(customerId, false);
+        public async Task<Customer> GetCustomerInfo(int customerId) =>
+            await _customerDataAcquisitionRepository.GetCustomerInfoAsync(customerId, false);
     }
 }

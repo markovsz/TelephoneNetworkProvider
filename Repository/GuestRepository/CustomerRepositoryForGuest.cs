@@ -20,10 +20,10 @@ namespace Repository.GuestRepository
             _customerDataAcquisitionRepository = customerDataAcquisitionRepository;
         }
 
-        public Customer GetCustomerInfo(int customerId) =>
-            _customerDataAcquisitionRepository.GetCustomerInfo(customerId, false);
+        public async Task<Customer> GetCustomerInfoAsync(int customerId) =>
+            await _customerDataAcquisitionRepository.GetCustomerInfoAsync(customerId, false);
 
-        public IEnumerable<Customer> GetCustomers(CustomerParameters parameters) =>
-            _customerDataAcquisitionRepository.GetCustomers(parameters);
+        public async Task<IEnumerable<Customer>> GetCustomersAsync(CustomerParameters parameters) =>
+            await _customerDataAcquisitionRepository.GetCustomersAsync(parameters);
     }
 }

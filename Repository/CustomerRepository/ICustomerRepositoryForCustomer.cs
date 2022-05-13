@@ -10,10 +10,10 @@ namespace Repository.CustomerRepository
 {
     public interface ICustomerRepositoryForCustomer
     {
-        Customer GetCustomer(int customerId, bool trackChanges);
-        IEnumerable<Customer> GetCustomers(CustomerParameters parameters);
+        Task<Customer> GetCustomerAsync(int customerId, bool trackChanges);
+        Task<IEnumerable<Customer>> GetCustomersAsync(CustomerParameters parameters);
         void UpdateCustomer(Customer customer);
         void DeleteCustomer(Customer customer);
-        void DeleteCustomerByUserId(int customerId);
+        Task DeleteCustomerByUserIdAsync(int customerId);
     }
 }

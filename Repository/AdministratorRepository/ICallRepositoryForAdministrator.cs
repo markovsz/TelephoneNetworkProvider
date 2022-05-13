@@ -11,8 +11,8 @@ namespace Repository.AdministratorRepository
 {
     public interface ICallRepositoryForAdministrator
     {
-        Call GetCall(int id);
-        IEnumerable<Call> GetCalls(CallParameters parameters);
-        IEnumerable<Call> GetCustomerCalls(int customerId, CallParameters parameters);
+        Task<Call> GetCallAsync(int id);
+        Task<IEnumerable<Call>> GetCallsAsync(CallParameters parameters);
+        Task<IEnumerable<Call>> GetCustomerCallsAsync(int customerId, CallParameters parameters);
     }
 }

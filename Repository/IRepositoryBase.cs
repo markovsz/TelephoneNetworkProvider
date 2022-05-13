@@ -11,6 +11,7 @@ namespace Repository
     {
         IQueryable<T> FindAll(bool trackChanges);
         IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression, bool trackChanges);
+        Task CreateAsync(T entity);
         void Create(T entity);
         void Update(T entity);
         void Delete(T entity);

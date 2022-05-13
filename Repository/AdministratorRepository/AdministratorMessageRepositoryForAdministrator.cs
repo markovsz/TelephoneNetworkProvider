@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Entities;
 using Entities.Models;
 using Entities.RequestFeatures;
+using Microsoft.EntityFrameworkCore;
 
 namespace Repository.AdministratorRepository
 {
@@ -17,28 +18,24 @@ namespace Repository.AdministratorRepository
         {
         }
 
-        public IEnumerable<AdministratorMessage> GetMessage(int id) =>
-            FindByCondition(m => m.Id.Equals(id), false);
+        public async Task<IEnumerable<AdministratorMessage>> GetMessageAsync(int id) =>
+            await FindByCondition(m => m.Id.Equals(id), false)
+            .ToListAsync();
 
-        public IEnumerable<AdministratorMessage> GetCustomerMessages(int customerId, AdministratorMessageParameters parameters) =>
-            FindByCondition(m => m.CustomerId.Equals(customerId), false)
+        public async Task<IEnumerable<AdministratorMessage>> GetCustomerMessagesAsync(int customerId, AdministratorMessageParameters parameters) =>
+            await FindByCondition(m => m.CustomerId.Equals(customerId), false)
             .AdministratorMessageParametersHandler(parameters)
-            .ToList();
+            .ToListAsync();
 
-        public IEnumerable<AdministratorMessage> GetCustomerWarningMessagesFromTime(int customerId, DateTime startTime) =>
-            FindByCondition(m => m.CustomerId.Equals(customerId), false)
+        public async Task<IEnumerable<AdministratorMessage>> GetCustomerWarningMessagesFromTimeAsync(int customerId, DateTime startTime) =>
+            await FindByCondition(m => m.CustomerId.Equals(customerId), false)
             .Where(m => m.Status.Equals("warning"))
             .Where(m => m.SendingTime.CompareTo(startTime) == 1)
-            .ToList();
+            .ToListAsync();
 
-        public void CreateMessage(AdministratorMessage message) => Create(message);
+        public async Task CreateMessageAsync(AdministratorMessage message) => await CreateAsync(message);
 
-        public void DeleteMessage(int id) =>
-            Delete(FindByCondition(m => m.Id.Equals(id), true).FirstOrDefault());
-
-        //public IEnumerable<AdministratorMessage> GetAdministratorMessagesByCustomerUserId(int customerId, AdministratorMessageParameters parameters) =>
-        //    FindByCondition(m => m.CustomerId.Equals(customerId), false)
-        //    .AdministratorMessageParametersHandler(parameters)
-        //    .ToList();
+        public async Task DeleteMessage(int id) =>
+            Delete(await FindByCondition(m => m.Id.Equals(id), true).FirstOrDefaultAsync());
     }
 }

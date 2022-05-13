@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Entities;
 using Entities.Models;
 using Entities.RequestFeatures;
+using Microsoft.EntityFrameworkCore;
 using Repository.CustomerAcquisitionRepository;
 
 
@@ -22,23 +23,23 @@ namespace Repository.AdministratorRepository
             _customerDataAcquisitionRepository = customerDataAcquisitionRepository;
         }
 
-        public IEnumerable<Customer> GetCustomers(CustomerParameters parameters, bool trackChanges) =>
-            _customerDataAcquisitionRepository.GetCustomers(parameters);
+        public async Task<IEnumerable<Customer>> GetCustomersAsync(CustomerParameters parameters, bool trackChanges) =>
+            await _customerDataAcquisitionRepository.GetCustomersAsync(parameters);
 
-        public Customer GetCustomerInfo(int customerId, bool trackChanges) =>
-            _customerDataAcquisitionRepository.GetCustomerInfo(customerId, trackChanges);
+        public async Task<Customer> GetCustomerInfoAsync(int customerId, bool trackChanges) =>
+            await _customerDataAcquisitionRepository.GetCustomerInfoAsync(customerId, trackChanges);
 
-        public void AddCustomer(Customer customer) => Create(customer);
+        public async Task AddCustomerAsync(Customer customer) => await CreateAsync(customer);
 
         public void UpdateCustomer(Customer customer) => Update(customer);
 
         public void DeleteCustomer(Customer customer) => Delete(customer);
 
-        public void DeleteCustomerByUserId(int customerId) =>
-            Delete(GetCustomerInfo(customerId, true));
+        public async Task DeleteCustomerByUserIdAsync(int customerId) =>
+            Delete(await GetCustomerInfoAsync(customerId, true));
         
-        public Customer FindCustomerByPhoneNumber(string phoneNumber, bool trackChanges) =>
-            FindByCondition(c => c.PhoneNumber.Equals(phoneNumber), trackChanges)
-            .FirstOrDefault();
+        public async Task<Customer> FindCustomerByPhoneNumberAsync(string phoneNumber, bool trackChanges) =>
+            await FindByCondition(c => c.PhoneNumber.Equals(phoneNumber), trackChanges)
+            .FirstOrDefaultAsync();
     }
 }

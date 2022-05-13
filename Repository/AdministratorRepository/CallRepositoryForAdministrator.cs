@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Entities;
 using Entities.Models;
 using Entities.RequestFeatures;
+using Microsoft.EntityFrameworkCore;
 
 namespace Repository.AdministratorRepository
 {
@@ -16,18 +17,18 @@ namespace Repository.AdministratorRepository
         {
         }
 
-        public Call GetCall(int id) =>
-            FindByCondition(c => c.Id.Equals(id), false)
-            .FirstOrDefault();
+        public async Task<Call> GetCallAsync(int id) =>
+            await FindByCondition(c => c.Id.Equals(id), false)
+            .FirstOrDefaultAsync();
 
-        public IEnumerable<Call> GetCalls(CallParameters parameters) =>
-            FindAll(false)
+        public async Task<IEnumerable<Call>> GetCallsAsync(CallParameters parameters) =>
+            await FindAll(false)
             .CallParametersHandler(parameters)
-            .ToList();
+            .ToListAsync();
 
-        public IEnumerable<Call> GetCustomerCalls(int customerId, CallParameters parameters) =>
-            FindByCondition(c => c.Caller.Id.Equals(customerId) || c.CalledBy.Id.Equals(customerId), false)
+        public async Task<IEnumerable<Call>> GetCustomerCallsAsync(int customerId, CallParameters parameters) =>
+            await FindByCondition(c => c.Caller.Id.Equals(customerId) || c.CalledBy.Id.Equals(customerId), false)
             .CallParametersHandler(parameters)
-            .ToList();
+            .ToListAsync();
     }
 }

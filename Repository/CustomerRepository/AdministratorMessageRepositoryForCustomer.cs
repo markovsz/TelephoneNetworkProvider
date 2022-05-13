@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Entities.RequestFeatures;
+using Microsoft.EntityFrameworkCore;
 
 namespace Repository.CustomerRepository
 {
@@ -16,9 +17,9 @@ namespace Repository.CustomerRepository
         {
         }
 
-        public IEnumerable<AdministratorMessage> GetMessages(int customerId, AdministratorMessageParameters parameters) =>
-            FindByCondition(m => m.CustomerId.Equals(customerId), false)
+        public async Task<IEnumerable<AdministratorMessage>> GetMessagesAsync(int customerId, AdministratorMessageParameters parameters) =>
+            await FindByCondition(m => m.CustomerId.Equals(customerId), false)
             .AdministratorMessageParametersHandler(parameters)
-            .ToList();
+            .ToListAsync();
     }
 }

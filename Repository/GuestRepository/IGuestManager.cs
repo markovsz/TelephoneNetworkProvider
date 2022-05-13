@@ -9,6 +9,6 @@ namespace Repository.GuestRepository
     public interface IGuestManager
     {
         ICustomerRepositoryForGuest Customers { get; }
-        void Save();
+        Task SaveAsync();
     }
 }

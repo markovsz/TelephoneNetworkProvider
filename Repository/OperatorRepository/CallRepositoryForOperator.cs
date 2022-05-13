@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Entities;
 using Entities.Models;
 using Entities.RequestFeatures;
+using Microsoft.EntityFrameworkCore;
 
 namespace Repository.OperatorRepository
 {
@@ -16,24 +17,24 @@ namespace Repository.OperatorRepository
         {
         }
 
-        public IEnumerable<Call> GetCalls(CallParameters parameters, bool trackChanges) =>
-            FindAll(trackChanges)
+        public async Task<IEnumerable<Call>> GetCallsAsync(CallParameters parameters, bool trackChanges) =>
+            await FindAll(trackChanges)
             .CallParametersHandler(parameters)
-            .ToList();
+            .ToListAsync();
 
-        public IEnumerable<Call> GetCustomerCalls(int customerId, CallParameters parameters) =>
-            FindByCondition(c => c.CallerId.Equals(customerId) || c.CalledBy.Equals(customerId), false)
+        public async Task<IEnumerable<Call>> GetCustomerCallsAsync(int customerId, CallParameters parameters) =>
+            await FindByCondition(c => c.CallerId.Equals(customerId) || c.CalledBy.Equals(customerId), false)
             .CallParametersHandler(parameters)
-            .ToList();
+            .ToListAsync();
 
-        public Call GetCallInfo(int id, bool trackChanges) =>
-            FindByCondition(c => c.Id.Equals(id), trackChanges)
-            .FirstOrDefault();
+        public async Task<Call> GetCallInfoAsync(int id, bool trackChanges) =>
+            await FindByCondition(c => c.Id.Equals(id), trackChanges)
+            .FirstOrDefaultAsync();
 
-        public void CreateCall(Call call) => Create(call);
+        public async Task CreateCallAsync(Call call) => await CreateAsync(call);
 
-        public void DeleteCallById(int id) =>
-            Delete(FindByCondition(c => c.Id.Equals(id), true).FirstOrDefault());
+        public async Task DeleteCallByIdAsync(int id) =>
+            Delete(await FindByCondition(c => c.Id.Equals(id), true).FirstOrDefaultAsync());
 
     }
 }

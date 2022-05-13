@@ -10,10 +10,10 @@ namespace Repository.OperatorRepository
 {
     public interface ICallRepositoryForOperator
     {
-        IEnumerable<Call> GetCalls(CallParameters parameters, bool trackChanges);
-        Call GetCallInfo(int id, bool trackChanges);
-        IEnumerable<Call> GetCustomerCalls(int customerId, CallParameters parameters);
-        void CreateCall(Call call); 
-        void DeleteCallById(int id); 
+        Task<IEnumerable<Call>> GetCallsAsync(CallParameters parameters, bool trackChanges);
+        Task<Call> GetCallInfoAsync(int id, bool trackChanges);
+        Task<IEnumerable<Call>> GetCustomerCallsAsync(int customerId, CallParameters parameters);
+        Task CreateCallAsync(Call call); 
+        Task DeleteCallByIdAsync(int id); 
     }
 }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Entities;
 using Entities.Models;
 using Entities.RequestFeatures;
+using Microsoft.EntityFrameworkCore;
 
 namespace Repository.CustomerRepository
 {
@@ -16,13 +17,13 @@ namespace Repository.CustomerRepository
         {
         }
 
-        public Call GetCall(int id) =>
-            FindByCondition(c => c.Id.Equals(id), false)
-            .FirstOrDefault();
+        public async Task<Call> GetCallAsync(int id) =>
+            await FindByCondition(c => c.Id.Equals(id), false)
+            .FirstOrDefaultAsync();
 
-        public IEnumerable<Call> GetCalls(int customerId, CallParameters parameters) =>
-            FindByCondition(c => c.CallerId.Equals(customerId) || c.CalledBy.Equals(customerId), false)
+        public async Task<IEnumerable<Call>> GetCallsAsync(int customerId, CallParameters parameters) =>
+            await FindByCondition(c => c.CallerId.Equals(customerId) || c.CalledBy.Equals(customerId), false)
             .CallParametersHandler(parameters)
-            .ToList();
+            .ToListAsync();
     }
 }

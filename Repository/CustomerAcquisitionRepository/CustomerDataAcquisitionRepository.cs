@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Repository.CustomerAcquisitionRepository
 {
@@ -16,16 +17,13 @@ namespace Repository.CustomerAcquisitionRepository
         {
         }
 
-        public Customer GetCustomerInfo(int customerId, bool trackChanges)
-        {
-            return FindByCondition(c => c.Id.Equals(customerId), trackChanges)
-                .FirstOrDefault();
-        }
+        public async Task<Customer> GetCustomerInfo(int customerId, bool trackChanges) => 
+            await FindByCondition(c => c.Id.Equals(customerId), trackChanges)
+                .FirstOrDefaultAsync();
 
-        public IEnumerable<Customer> GetCustomers(CustomerParameters parameters)
-        {
-            return FindAll(false)
-                .CustomerParametersHandler(parameters);
-        }
+        public async Task<IEnumerable<Customer>> GetCustomers(CustomerParameters parameters) =>
+            await FindAll(false)
+                .CustomerParametersHandler(parameters)
+                .ToListAsync();
     }
 }

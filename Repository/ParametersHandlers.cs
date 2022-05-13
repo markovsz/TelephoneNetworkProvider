@@ -52,6 +52,26 @@ namespace Repository
         {
             //TODO
 
+            if (parameters.NamePart is not null)
+            {
+                customers = customers.Where(c => c.Name.Contains(parameters.NamePart));
+            }
+
+            if (parameters.SurnamePart is not null)
+            {
+                customers = customers.Where(c => c.Surname.Contains(parameters.SurnamePart));
+            }
+
+            if (parameters.PatronymicPart is not null)
+            {
+                customers = customers.Where(c => c.Patronymic.Contains(parameters.PatronymicPart));
+            }
+
+            if (parameters.PhoneNumberPart is not null)
+            {
+                customers = customers.Where(c => c.PhoneNumber.Contains(parameters.PhoneNumberPart));
+            }
+
             return customers
                 .RequestParametersHandler(parameters);
         }

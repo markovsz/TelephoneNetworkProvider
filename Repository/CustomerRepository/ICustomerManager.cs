@@ -11,6 +11,6 @@ namespace Repository.CustomerRepository
         ICustomerRepositoryForCustomer Customer { get; }
         ICallRepositoryForCustomer Calls { get; }
         IAdministratorMessageRepositoryForCustomer AdministratorMessages { get; }
-        void Save();
+        Task SaveAsync();
     }
 }

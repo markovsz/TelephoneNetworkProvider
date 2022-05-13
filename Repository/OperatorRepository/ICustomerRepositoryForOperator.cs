@@ -10,7 +10,7 @@ namespace Repository.OperatorRepository
 {
     public interface ICustomerRepositoryForOperator
     {
-        IEnumerable<Customer> GetCustomers(CustomerParameters parameters);
-        Customer GetCustomerInfo(int customerId);
+        Task<IEnumerable<Customer>> GetCustomersAsync(CustomerParameters parameters);
+        Task<Customer> GetCustomerInfoAsync(int customerId);
     }
 }
