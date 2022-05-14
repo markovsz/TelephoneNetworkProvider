@@ -17,32 +17,28 @@ namespace Repository
                 calls = calls
                     .Include(c => c.Caller)
                     .Include(c => c.CalledBy)
-                    .Where(c => c.Caller.PhoneNumber.Contains(parameters.PhoneNumberPart) || c.CalledBy.PhoneNumber.Contains(parameters.PhoneNumberPart));
+                    .Where(c => c.Caller.PhoneNumber.Contains(parameters.PhoneNumberPart) 
+                            || c.CalledBy.PhoneNumber.Contains(parameters.PhoneNumberPart));
 
             if (parameters.MinCallInitiationTime.HasValue)
-            {
-                DateTime minCallInitiationTime = parameters.MinCallInitiationTime.Value;
                 calls = calls
-                    .Where(c => minCallInitiationTime.CompareTo(c.CallInitiationTime) <= 0);
-            }
+                    .Where(c => parameters.MinCallInitiationTime.Value
+                        .CompareTo(c.CallInitiationTime) <= 0);
 
             if (parameters.MaxCallInitiationTime.HasValue)
-            {
-                DateTime maxCallInitiationTime = parameters.MaxCallInitiationTime.Value;
-                calls = calls.Where(c => maxCallInitiationTime.CompareTo(c.CallInitiationTime) >= 0);
-            }
+                calls = calls
+                    .Where(c => parameters.MaxCallInitiationTime.Value
+                        .CompareTo(c.CallInitiationTime) >= 0);
 
             if (parameters.MinCallEndTime.HasValue)
-            {
-                DateTime minCallEndTime = parameters.MinCallEndTime.Value;
-                calls = calls.Where(c => minCallEndTime.CompareTo(c.CallEndTime) <= 0);
-            }
+                calls = calls
+                    .Where(c => parameters.MinCallEndTime.Value
+                        .CompareTo(c.CallEndTime) <= 0);
 
             if (parameters.MinCallEndTime.HasValue)
-            {
-                DateTime maxCallEndTime = parameters.MaxCallEndTime.Value;
-                calls = calls.Where(c => maxCallEndTime.CompareTo(c.CallEndTime) >= 0);
-            }
+                calls = calls
+                    .Where(c => parameters.MaxCallEndTime.Value
+                        .CompareTo(c.CallEndTime) >= 0);
 
             return calls
                 .RequestParametersHandler(parameters);
@@ -53,24 +49,20 @@ namespace Repository
             //TODO
 
             if (parameters.NamePart is not null)
-            {
-                customers = customers.Where(c => c.Name.Contains(parameters.NamePart));
-            }
+                customers = customers
+                    .Where(c => c.Name.Contains(parameters.NamePart));
 
             if (parameters.SurnamePart is not null)
-            {
-                customers = customers.Where(c => c.Surname.Contains(parameters.SurnamePart));
-            }
+                customers = customers
+                    .Where(c => c.Surname.Contains(parameters.SurnamePart));
 
             if (parameters.PatronymicPart is not null)
-            {
-                customers = customers.Where(c => c.Patronymic.Contains(parameters.PatronymicPart));
-            }
+                customers = customers
+                    .Where(c => c.Patronymic.Contains(parameters.PatronymicPart));
 
             if (parameters.PhoneNumberPart is not null)
-            {
-                customers = customers.Where(c => c.PhoneNumber.Contains(parameters.PhoneNumberPart));
-            }
+                customers = customers
+                    .Where(c => c.PhoneNumber.Contains(parameters.PhoneNumberPart));
 
             return customers
                 .RequestParametersHandler(parameters);
@@ -79,6 +71,13 @@ namespace Repository
         public static IQueryable<AdministratorMessage> AdministratorMessageParametersHandler(this IQueryable<AdministratorMessage> messages, AdministratorMessageParameters parameters)
         {
             //TODO
+            if (parameters.customerId.HasValue)
+                messages = messages
+                    .Where(m => m.CustomerId.Equals(parameters.customerId.Value));
+
+            if (parameters.Status is not null)
+                messages = messages
+                    .Where(m => m.Status.Equals(parameters.Status));
 
             return messages
                 .RequestParametersHandler(parameters);
