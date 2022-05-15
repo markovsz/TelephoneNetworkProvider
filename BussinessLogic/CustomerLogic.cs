@@ -16,7 +16,6 @@ namespace BussinessLogic
     public class CustomerLogic : ICustomerLogic
     {
         private ICustomerManager _customerManager;
-        //private ICustomerDataAcquisitionLogic<CustomerForReadInCustomerDto> _customerDataAcquisitionLogic;
         private IMapper _mapper;
 
         public CustomerLogic(ICustomerManager customerManager, IMapper mapper)
@@ -32,38 +31,38 @@ namespace BussinessLogic
             _customerManager.Customer.UpdateCustomer(customer);
         }
 
-        public void ReplenishTheBalance(int customerId, Decimal currency)
+        public async Task ReplenishTheBalanceAsync(int customerId, Decimal currency)
         {
             if (currency < 0.0m || currency > 50000.0m)
                 throw new ArgumentOutOfRangeException("Currency should be between 0.0 and 50000.0");
-            var customer = _customerManager.Customer.GetCustomer(customerId, true);
+            var customer = await _customerManager.Customer.GetCustomerAsync(customerId, true);
             customer.MoneyBalance += currency;
         }
 
-        public IEnumerable<CallForReadInCustomerDto> GetCalls(int customerId, CallParameters parameters)
+        public async Task<IEnumerable<CallForReadInCustomerDto>> GetCallsAsync(int customerId, CallParameters parameters)
         {
-            var calls = _customerManager.Calls.GetCalls(customerId, parameters);
+            var calls = await _customerManager.Calls.GetCallsAsync(customerId, parameters);
             var callsDto = _mapper.Map<IEnumerable<CallForReadInCustomerDto>>(calls);
             return callsDto;
         }
 
-        public CallForReadInCustomerDto GetCall(int id)
+        public async Task<CallForReadInCustomerDto> GetCallAsync(int id)
         {
-            var call = _customerManager.Calls.GetCall(id);
+            var call = await _customerManager.Calls.GetCallAsync(id);
             var callDto = _mapper.Map<CallForReadInCustomerDto>(call);
             return callDto;
         }
 
-        public CustomerForReadInCustomerDto GetCustomerInfo(int customerId)
+        public async Task<CustomerForReadInCustomerDto> GetCustomerInfoAsync(int customerId)
         {
-            var customer = _customerManager.Customer.GetCustomer(customerId, false);
+            var customer = await _customerManager.Customer.GetCustomerAsync(customerId, false);
             var customerDto = _mapper.Map<CustomerForReadInCustomerDto>(customer);
             return customerDto;
         }
 
-        public IEnumerable<CustomerForReadInCustomerDto> GetCustomers(CustomerParameters parameters)
+        public async Task<IEnumerable<CustomerForReadInCustomerDto>> GetCustomersAsync(CustomerParameters parameters)
         {
-            var customers = _customerManager.Customer.GetCustomers(parameters);
+            var customers = await _customerManager.Customer.GetCustomersAsync(parameters);
             var customersDto = _mapper.Map<IEnumerable<CustomerForReadInCustomerDto>>(customers);
             return customersDto;
         }

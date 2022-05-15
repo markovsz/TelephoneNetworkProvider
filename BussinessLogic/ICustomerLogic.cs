@@ -11,11 +11,11 @@ namespace BussinessLogic
 {
     public interface ICustomerLogic
     {
-        void ReplenishTheBalance(int customerId, Decimal currency);
-        IEnumerable<CallForReadInCustomerDto> GetCalls(int customerId, CallParameters parameters);
-        CallForReadInCustomerDto GetCall(int id);
-        IEnumerable<CustomerForReadInCustomerDto> GetCustomers(CustomerParameters parameters);
-        CustomerForReadInCustomerDto GetCustomerInfo(int customerId);
+        Task ReplenishTheBalanceAsync(int customerId, Decimal currency);
+        Task<IEnumerable<CallForReadInCustomerDto>> GetCallsAsync(int customerId, CallParameters parameters);
+        Task<CallForReadInCustomerDto> GetCallAsync(int id);
+        Task<IEnumerable<CustomerForReadInCustomerDto>> GetCustomersAsync(CustomerParameters parameters);
+        Task<CustomerForReadInCustomerDto> GetCustomerInfoAsync(int customerId);
         void UpdateCustomerInfo(int customerId, CustomerForUpdateInCustomerDto customerDto);
     }
 }

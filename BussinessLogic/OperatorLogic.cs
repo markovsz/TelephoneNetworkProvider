@@ -23,48 +23,48 @@ namespace BussinessLogic
             _operatorManager = operatorManager;
         }
 
-        public void CreateCall(CallForCreateInOperatorDto callDto)
+        public async Task CreateCallAsync(CallForCreateInOperatorDto callDto)
         {
             var call = _mapper.Map<Call>(callDto);
-            _operatorManager.Calls.CreateCall(call);
+            await _operatorManager.Calls.CreateCallAsync(call);
         }
 
-        public void DeleteCall(int id)
+        public async Task DeleteCallAsync(int id)
         {
-            _operatorManager.Calls.DeleteCallById(id);
+            await _operatorManager.Calls.DeleteCallByIdAsync(id);
         }
 
-        public CallForReadInOperatorDto GetCall(int id)
+        public async Task<CallForReadInOperatorDto> GetCallAsync(int id)
         {
-            var calls = _operatorManager.Calls.GetCallInfo(id, false);
+            var calls = await _operatorManager.Calls.GetCallInfoAsync(id, false);
             var callsDto = _mapper.Map<CallForReadInOperatorDto>(calls);
             return callsDto;
         }
 
-        public IEnumerable<CallForReadInOperatorDto> GetCalls(CallParameters parameters)
+        public async Task<IEnumerable<CallForReadInOperatorDto>> GetCallsAsync(CallParameters parameters)
         {
-            var calls = _operatorManager.Calls.GetCalls(parameters, false);
+            var calls = await _operatorManager.Calls.GetCallsAsync(parameters, false);
             var callsDto = _mapper.Map<IEnumerable<CallForReadInOperatorDto>>(calls);
             return callsDto;
         }
 
-        public IEnumerable<CallForReadInOperatorDto> GetCustomerCalls(int customerId, CallParameters parameters)
+        public async Task<IEnumerable<CallForReadInOperatorDto>> GetCustomerCallsAsync(int customerId, CallParameters parameters)
         {
-            var calls = _operatorManager.Calls.GetCustomerCalls(customerId, parameters);
+            var calls = await _operatorManager.Calls.GetCustomerCallsAsync(customerId, parameters);
             var callsDto = _mapper.Map<IEnumerable<CallForReadInOperatorDto>>(calls);
             return callsDto;
         }
 
-        public CustomerForReadInOperatorDto GetCustomerInfo(int customerId)
+        public async Task<CustomerForReadInOperatorDto> GetCustomerInfoAsync(int customerId)
         {
-            var customer = _operatorManager.Customers.GetCustomerInfo(customerId);
+            var customer = await _operatorManager.Customers.GetCustomerInfoAsync(customerId);
             var customerDto = _mapper.Map<CustomerForReadInOperatorDto>(customer);
             return customerDto;
         }
 
-        public IEnumerable<CustomerForReadInOperatorDto> GetCustomers(CustomerParameters parameters)
+        public async Task<IEnumerable<CustomerForReadInOperatorDto>> GetCustomersAsync(CustomerParameters parameters)
         {
-            var customers = _operatorManager.Customers.GetCustomers(parameters);
+            var customers = await _operatorManager.Customers.GetCustomersAsync(parameters);
             var customersDto = _mapper.Map<IEnumerable<CustomerForReadInOperatorDto>>(customers);
             return customersDto;
         }

@@ -34,20 +34,6 @@ namespace BussinessLogic
 
         public async Task<(bool, string)> ValidateUser(UserForAuthenticationDto user)
         {
-            //CancellationToken token = new CancellationToken();
-            //var result = await _roleManager.CreateAsync(new IdentityRole("Administrator"), token);
-            //result = await _roleManager.CreateAsync(new IdentityRole("Customer"), token);
-            //result = await _roleManager.CreateAsync(new IdentityRole("Operator"), token);
-
-            //_userManager.CreateAsync(new User() { });
-
-
-            //var userP = new User("iiii");
-            //var result1 = await _userManager.CreateAsync(userP, "eeee2eeee2eeee");
-            //var userP = await _userManager.FindByNameAsync("iiii");
-            //var result2 = await _userManager.AddToRoleAsync(userP, "Administrator");
-
-
             _user = await _userManager.FindByNameAsync(user.Login);
             bool isValid = _user != null && await _userManager.CheckPasswordAsync(_user, user.Password);
             string role = null;

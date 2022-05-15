@@ -25,55 +25,55 @@ namespace BussinessLogic
             _mapper = mapper;
         }
 
-        public bool CheckCall(int id)
+        public async Task<bool> CheckCallAsync(int id)
         {
-            return _administratorManager.Calls.GetCall(id) is not null;
+            return (await _administratorManager.Calls.GetCallAsync(id)) is not null;
         }
 
-        public bool CheckCustomer(int customerId)
+        public async Task<bool> CheckCustomerAsync(int customerId)
         {
-            return _administratorManager.Customers.GetCustomerInfo(customerId, false) is not null;
+            return (await _administratorManager.Customers.GetCustomerInfoAsync(customerId, false)) is not null;
         }
 
-        public CallForReadInAdministratorDto GetCallInfo(int id)
+        public async Task<CallForReadInAdministratorDto> GetCallInfoAsync(int id)
         {
-            var call = _administratorManager.Calls.GetCall(id);
+            var call = await _administratorManager.Calls.GetCallAsync(id);
             var callDto = _mapper.Map<CallForReadInAdministratorDto>(call);
             return callDto;
         }
 
-        public IEnumerable<CallForReadInAdministratorDto> GetCalls(CallParameters parameters)
+        public async Task<IEnumerable<CallForReadInAdministratorDto>> GetCallsAsync(CallParameters parameters)
         {
-            var call = _administratorManager.Calls.GetCalls(parameters);
+            var call = await _administratorManager.Calls.GetCallsAsync(parameters);
             var callDto = _mapper.Map<IEnumerable<CallForReadInAdministratorDto>>(call);
             return callDto;
         }
 
-        public IEnumerable<CallForReadInAdministratorDto> GetCustomerCalls(int customerId, CallParameters parameters)
+        public async Task<IEnumerable<CallForReadInAdministratorDto>> GetCustomerCallsAsync(int customerId, CallParameters parameters)
         {
-            var call = _administratorManager.Calls.GetCustomerCalls(customerId, parameters);
+            var call = await _administratorManager.Calls.GetCustomerCallsAsync(customerId, parameters);
             var callDto = _mapper.Map<IEnumerable<CallForReadInAdministratorDto>>(call);
             return callDto;
         }
 
-        public CustomerForReadInAdministratorDto GetCustomerInfo(int customerId)
+        public async Task<CustomerForReadInAdministratorDto> GetCustomerInfoAsync(int customerId)
         {
-            var customer = _administratorManager.Customers.GetCustomerInfo(customerId, false);
+            var customer = await _administratorManager.Customers.GetCustomerInfoAsync(customerId, false);
             var customerDto = _mapper.Map<CustomerForReadInAdministratorDto>(customer);
             return customerDto;
         }
 
-        public IEnumerable<CustomerForReadInAdministratorDto> GetCustomers(CustomerParameters parameters)
+        public async Task<IEnumerable<CustomerForReadInAdministratorDto>> GetCustomersAsync(CustomerParameters parameters)
         {
-            var customers = _administratorManager.Customers.GetCustomers(parameters, false);
+            var customers = await _administratorManager.Customers.GetCustomersAsync(parameters, false);
             var customersDto = _mapper.Map<IEnumerable<CustomerForReadInAdministratorDto>>(customers);
             return customersDto;
         }
 
-        public DateTime TimePastsFromLastWarnMessage(int customerId)
+        public async Task<DateTime> TimePastsFromLastWarnMessageAsync(int customerId)
         {
-            var customer = _administratorManager.Customers.GetCustomerInfo(customerId, false);
-            var message = _administratorManager.Messages.GetCustomerWarningMessagesFromTime(customerId, customer.LastBlockTime)
+            var customer = await _administratorManager.Customers.GetCustomerInfoAsync(customerId, false);
+            var message = (await _administratorManager.Messages.GetCustomerWarningMessagesFromTimeAsync(customerId, customer.LastBlockTime))
                 .OrderByDescending(m => m.SendingTime)
                 .FirstOrDefault();
             if (message is null)
@@ -81,21 +81,21 @@ namespace BussinessLogic
             return message.SendingTime;
         }
 
-        public IEnumerable<AdministratorMessageForReadInAdministratorDto> GetAdministratorMessagesByCustomerId(int customerId, AdministratorMessageParameters parameters)
+        public async Task<IEnumerable<AdministratorMessageForReadInAdministratorDto>> GetAdministratorMessagesByCustomerIdAsync(int customerId, AdministratorMessageParameters parameters)
         {
-            var messages = _administratorManager.Messages.GetCustomerMessages(customerId, parameters);
+            var messages = await _administratorManager.Messages.GetCustomerMessagesAsync(customerId, parameters);
             var messagesDto = _mapper.Map<IEnumerable<AdministratorMessageForReadInAdministratorDto>>(messages);
             return messagesDto;
         }
 
-        public void SendMessage(int customerId, AdministratorMessageForCreateInAdministratorDto messageDto)
+        public async Task SendMessageAsync(int customerId, AdministratorMessageForCreateInAdministratorDto messageDto)
         {
-            var customer = _administratorManager.Customers.GetCustomerInfo(customerId, true);
+            var customer = await _administratorManager.Customers.GetCustomerInfoAsync(customerId, true);
             //var messages = _administratorManager.Messages.GetCustomerWarningMessagesFromTime(customerId, customer.LastBlockTime);
             if (customer.IsBlocked)
                 throw new CustomerBlockedException("Customer is blocked and cannot catch the messages");
 
-            if (TimePastsFromLastWarnMessage(customerId).CompareTo(new DateTime(0, 0, 1/*1 day*/)) >= 0)
+            if ((await TimePastsFromLastWarnMessageAsync(customerId)).CompareTo(new DateTime(0, 0, 1/*1 day*/)) >= 0)
                 throw new SendMessageException("Didn't past enough time to send a new message");
 
             AdministratorMessage message = new AdministratorMessage();
@@ -103,14 +103,14 @@ namespace BussinessLogic
             message.Status = messageDto.Status;
             message.Text = messageDto.Text;
             message.SendingTime = DateTime.Now;
-            _administratorManager.Messages.CreateMessage(message);
+            await _administratorManager.Messages.CreateMessageAsync(message);
         }
 
-        public async Task CreateCustomer(CustomerForCreateInAdministratorDto customerDto)
+        public async Task CreateCustomerAsync(CustomerForCreateInAdministratorDto customerDto)
         {
 
             //bool isExist = _administratorManager.Customers.CheckCustomerByUserId();
-            if(_administratorManager.Customers.FindCustomerByPhoneNumber(customerDto.PhoneNumber, false) is not null)
+            if((await _administratorManager.Customers.FindCustomerByPhoneNumberAsync(customerDto.PhoneNumber, false)) is not null)
             {
                 throw new UserExistException("user is already existing");
             }
@@ -122,40 +122,40 @@ namespace BussinessLogic
             var user = await _userManipulationLogic.CreateUser(customerDto.Login, customerDto.Password, "Customer");
 
             customer.UserId = user.Id;
-            _administratorManager.Customers.AddCustomer(customer);
-            _administratorManager.Save();
+            await _administratorManager.Customers.AddCustomerAsync(customer);
+            await _administratorManager.SaveAsync();
         }
 
-        public bool CheckPhoneNumberForExistence(string phoneNumber)
+        public async Task<bool> CheckPhoneNumberForExistenceAsync(string phoneNumber)
         {
-            return _administratorManager.Customers.FindCustomerByPhoneNumber(phoneNumber, false) is not null;
+            return (await _administratorManager.Customers.FindCustomerByPhoneNumberAsync(phoneNumber, false)) is not null;
         }
 
-        public bool TryToSetNewPhoneNumber(int customerId, string phoneNumber)
+        public async Task<bool> TryToSetNewPhoneNumberAsync(int customerId, string phoneNumber)
         {
-            bool isAny = CheckPhoneNumberForExistence(phoneNumber);
+            bool isAny = await CheckPhoneNumberForExistenceAsync(phoneNumber);
             if (!isAny)
             {
-                _administratorManager.Customers.GetCustomerInfo(customerId, true).PhoneNumber = phoneNumber;
-                _administratorManager.Save();
+                (await _administratorManager.Customers.GetCustomerInfoAsync(customerId, true)).PhoneNumber = phoneNumber;
+                await _administratorManager.SaveAsync();
             }
             return !isAny;
         }
 
-        public void BlockCustomer(int customerId)
+        public async Task BlockCustomerAsync(int customerId)
         {
-            var customer = _administratorManager.Customers.GetCustomerInfo(customerId, true);
+            var customer = await _administratorManager.Customers.GetCustomerInfoAsync(customerId, true);
 
             if (customer.IsBlocked) return;
-            var messages = _administratorManager.Messages.GetCustomerWarningMessagesFromTime(customerId, customer.LastBlockTime);
+            var messages = await _administratorManager.Messages.GetCustomerWarningMessagesFromTimeAsync(customerId, customer.LastBlockTime);
 
             if (messages.Count() >= 3) customer.IsBlocked = true;
-            _administratorManager.Save();
+            await _administratorManager.SaveAsync();
         }
 
-        public void DeleteCustomer(int customerId)
+        public async Task DeleteCustomerAsync(int customerId)
         {
-            _administratorManager.Customers.DeleteCustomerByUserId(customerId);
+            await _administratorManager.Customers.DeleteCustomerByUserIdAsync(customerId);
         }
 
         public void UpdateCustomer(int customerId, CustomerForUpdateInAdministratorDto customerDto)

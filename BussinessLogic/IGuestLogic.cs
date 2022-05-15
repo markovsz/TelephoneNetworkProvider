@@ -11,7 +11,7 @@ namespace BussinessLogic
 {
     public interface IGuestLogic
     {
-        IEnumerable<CustomerForReadInGuestDto> GetCustomers(CustomerParameters parameters);
-        CustomerForReadInGuestDto GetCustomerInfo(int customerId);
+        Task<IEnumerable<CustomerForReadInGuestDto>> GetCustomersAsync(CustomerParameters parameters);
+        Task<CustomerForReadInGuestDto> GetCustomerInfoAsync(int customerId);
     }
 }

@@ -12,21 +12,21 @@ namespace BussinessLogic
 {
     public interface IAdministratorLogic
     {
-        bool CheckCustomer(int customerId);
-        IEnumerable<CustomerForReadInAdministratorDto> GetCustomers(CustomerParameters parameters);
-        CustomerForReadInAdministratorDto GetCustomerInfo(int customerId);
-        IEnumerable<CallForReadInAdministratorDto> GetCustomerCalls(int customerId, CallParameters parameters);
-        IEnumerable<CallForReadInAdministratorDto> GetCalls(CallParameters parameters);
-        bool CheckCall(int id);
-        CallForReadInAdministratorDto GetCallInfo(int id);
-        void CreateCustomer(CustomerForCreateInAdministratorDto customerDto);
+        Task<bool> CheckCustomerAsync(int customerId);
+        Task<IEnumerable<CustomerForReadInAdministratorDto>> GetCustomersAsync(CustomerParameters parameters);
+        Task<CustomerForReadInAdministratorDto> GetCustomerInfoAsync(int customerId);
+        Task<IEnumerable<CallForReadInAdministratorDto>> GetCustomerCallsAsync(int customerId, CallParameters parameters);
+        Task<IEnumerable<CallForReadInAdministratorDto>> GetCallsAsync(CallParameters parameters);
+        Task<bool> CheckCallAsync(int id);
+        Task<CallForReadInAdministratorDto> GetCallInfoAsync(int id);
+        Task CreateCustomerAsync(CustomerForCreateInAdministratorDto customerDto);
         void UpdateCustomer(int customerId, CustomerForUpdateInAdministratorDto customer);
-        void DeleteCustomer(int customerId);
-        void SendMessage(int customerId, AdministratorMessageForCreateInAdministratorDto messageDto);
-        DateTime TimePastsFromLastWarnMessage(int customerId);
-        IEnumerable<AdministratorMessageForReadInAdministratorDto> GetAdministratorMessagesByCustomerId(int customerId, AdministratorMessageParameters parameters);
-        bool CheckPhoneNumberForExistence(string phoneNumber);
-        bool TryToSetNewPhoneNumber(int customerId, string phoneNumber);
-        void BlockCustomer(int customerId);
+        Task DeleteCustomerAsync(int customerId);
+        Task SendMessageAsync(int customerId, AdministratorMessageForCreateInAdministratorDto messageDto);
+        Task<DateTime> TimePastsFromLastWarnMessageAsync(int customerId);
+        Task<IEnumerable<AdministratorMessageForReadInAdministratorDto>> GetAdministratorMessagesByCustomerIdAsync(int customerId, AdministratorMessageParameters parameters);
+        Task<bool> CheckPhoneNumberForExistenceAsync(string phoneNumber);
+        Task<bool> TryToSetNewPhoneNumberAsync(int customerId, string phoneNumber);
+        Task BlockCustomerAsync(int customerId);
     }
 }

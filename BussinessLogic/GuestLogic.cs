@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using AutoMapper;
 using Entities.DataTransferObjects;
 using Entities.Models;
@@ -20,16 +21,16 @@ namespace BussinessLogic
             _mapper = mapper;
         }
 
-        public CustomerForReadInGuestDto GetCustomerInfo(int customerId)
+        public async Task<CustomerForReadInGuestDto> GetCustomerInfoAsync(int customerId)
         {
-            var customers = _guestManager.Customers.GetCustomerInfo(customerId);
+            var customers = await _guestManager.Customers.GetCustomerInfoAsync(customerId);
             var customersDto = _mapper.Map<CustomerForReadInGuestDto>(customers);
             return customersDto;
         }
 
-        public IEnumerable<CustomerForReadInGuestDto> GetCustomers(CustomerParameters parameters)
+        public async Task<IEnumerable<CustomerForReadInGuestDto>> GetCustomersAsync(CustomerParameters parameters)
         {
-            var customers = _guestManager.Customers.GetCustomers(parameters);
+            var customers = await _guestManager.Customers.GetCustomersAsync(parameters);
             var customersDto = _mapper.Map<IEnumerable<CustomerForReadInGuestDto>>(customers);
             return customersDto;
         }

@@ -10,12 +10,12 @@ namespace BussinessLogic
 {
     public interface IOperatorLogic
     {   
-        IEnumerable<CustomerForReadInOperatorDto> GetCustomers(CustomerParameters parameters);
-        CustomerForReadInOperatorDto GetCustomerInfo(int customerId);
-        IEnumerable<CallForReadInOperatorDto> GetCalls(CallParameters parameters);
-        IEnumerable<CallForReadInOperatorDto> GetCustomerCalls(int customerId, CallParameters parameters);
-        CallForReadInOperatorDto GetCall(int id);
-        void CreateCall(CallForCreateInOperatorDto callDto);
-        void DeleteCall(int id);
+        Task<IEnumerable<CustomerForReadInOperatorDto>> GetCustomersAsync(CustomerParameters parameters);
+        Task<CustomerForReadInOperatorDto> GetCustomerInfoAsync(int customerId);
+        Task<IEnumerable<CallForReadInOperatorDto>> GetCallsAsync(CallParameters parameters);
+        Task<IEnumerable<CallForReadInOperatorDto>> GetCustomerCallsAsync(int customerId, CallParameters parameters);
+        Task<CallForReadInOperatorDto> GetCallAsync(int id);
+        Task CreateCallAsync(CallForCreateInOperatorDto callDto);
+        Task DeleteCallAsync(int id);
     }
 }

@@ -19,7 +19,7 @@ namespace BussinessLogic
             _userManager = userManager;
         }
 
-        public async Task<User> CreateUser(string login, string password, string role)
+        public async Task<User> CreateUserAsync(string login, string password, string role)
         {
             //TODO
             User user = new User(login);
@@ -40,7 +40,7 @@ namespace BussinessLogic
             return user;
         }
 
-        public async Task DeleteUser(User user)
+        public async Task DeleteUserAsync(User user)
         {
             var result = await _userManager.DeleteAsync(user);
             if (!result.Succeeded)
@@ -50,7 +50,7 @@ namespace BussinessLogic
             }
         }
 
-        public async Task UpdateUser(User user)
+        public async Task UpdateUserAsync(User user)
         {
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
