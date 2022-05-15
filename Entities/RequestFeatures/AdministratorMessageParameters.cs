@@ -10,7 +10,7 @@ namespace Entities.RequestFeatures
     public class AdministratorMessageParameters : RequestParameters
     {
         [MaxLength(20)]
-        public string UserId { get; set; }
+        public int? customerId { get; set; }//TODO
 
 
         [MaxLength(20)]
