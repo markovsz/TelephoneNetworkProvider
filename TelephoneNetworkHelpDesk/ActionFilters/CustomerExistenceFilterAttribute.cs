@@ -2,10 +2,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System;
+using System.Threading.Tasks;
 
 namespace TelephoneNetworkProvider.ActionFilters
 {
-    public class CustomerExistenceFilterAttribute : IActionFilter
+    public class CustomerExistenceFilterAttribute : IAsyncActionFilter
     {
         private IAdministratorLogic _administratorLogic;
 
@@ -14,33 +15,17 @@ namespace TelephoneNetworkProvider.ActionFilters
             _administratorLogic = administratorLogic;
         }
 
-        public void OnActionExecuted(ActionExecutedContext context)
-        {
-        }
-
-        public void OnActionExecuting(ActionExecutingContext context)
+        public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             var action = context.RouteData.Values["action"];
             var controller = context.RouteData.Values["controller"];
             var customerId = (int)context.ActionArguments["customerId"];
             if (customerId < 1)
                 context.Result = new BadRequestObjectResult("In {controller}.{action}, invalid customer id");
-            //int pos = 0;
-            //var pathParts = context.HttpContext.Request.Path.Value.Split('/');
-            //for(int i = 0; i < pathParts.Length; ++i)
-            //{
-            //    if (pathParts[i].Equals("customer"))
-            //    {
-            //        pos = i + 1;
-            //    }
-            //}
-            //int customerId;
-            //bool isValid = Int32.TryParse(pathParts[pos], out customerId);
-            //if (!isValid)
-            //    context.Result = new BadRequestObjectResult($"In {controller}.{action}, customer id was wrong");
-            bool isExist = _administratorLogic.CheckCustomer(customerId);
+            bool isExist = await _administratorLogic.CheckCustomerAsync(customerId);
             if (!isExist)
                 context.Result = new BadRequestObjectResult($"In {controller}.{action}, customer with id = {customerId} not found");
+            await next();
         }
     }
 }
