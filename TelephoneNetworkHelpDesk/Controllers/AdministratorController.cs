@@ -28,20 +28,20 @@ namespace TelephoneNetworkProvider.Controllers
             _administratorLogic = administratorLogic;
         }
 
-        //[ServiceFilter(typeof(ParametersValidationFilterAttribute))]
+        [ServiceFilter(typeof(ParametersValidationFilterAttribute))]
         [HttpGet("/administrator-profile/customers")]
-        public IActionResult GetCustomers([FromQuery] CustomerParameters parameters)
+        public async Task<IActionResult> GetCustomersAsync([FromQuery] CustomerParameters parameters)
         {
-            var customers = _administratorLogic.GetCustomers(parameters);
+            var customers = await _administratorLogic.GetCustomersAsync(parameters);
             return Ok(customers);
         }
 
         [ServiceFilter(typeof(CustomerExistenceFilterAttribute))]
         [Route("/administrator-profile/customers/customer/{customerId:int}")]
         [HttpGet]
-        public IActionResult GetCustomerInfo(int customerId)
+        public async Task<IActionResult> GetCustomerInfoAsync(int customerId)
         {
-            var customer = _administratorLogic.GetCustomerInfo(customerId);
+            var customer = await _administratorLogic.GetCustomerInfoAsync(customerId);
             return Ok(customer);
         }
 
@@ -50,36 +50,36 @@ namespace TelephoneNetworkProvider.Controllers
         [ServiceFilter(typeof(CustomerExistenceFilterAttribute))]
         [Route("/administrator-profile/customers/customer/{customerId:int}/calls")]
         [HttpGet]
-        public IActionResult GetCustomerCalls(int customerId, [FromQuery] CallParameters parameters)
+        public async Task<IActionResult> GetCustomerCallsAsync(int customerId, [FromQuery] CallParameters parameters)
         {
-            var calls = _administratorLogic.GetCustomerCalls(customerId, parameters);
+            var calls = await _administratorLogic.GetCustomerCallsAsync(customerId, parameters);
             return Ok(calls);
         }
 
 
         [ServiceFilter(typeof(ParametersValidationFilterAttribute))]
         [HttpGet("/administrator-profile/calls")]
-        public IActionResult GetCalls([FromQuery] CallParameters parameters)
+        public async Task<IActionResult> GetCallsAsync([FromQuery] CallParameters parameters)
         {
-            var calls = _administratorLogic.GetCalls(parameters);
+            var calls = await _administratorLogic.GetCallsAsync(parameters);
             return Ok(calls);
         }
 
 
-        [ServiceFilter(typeof(CallExistenceFilterAttribute))]/**/
+        [ServiceFilter(typeof(CallExistenceFilterAttribute))]
         [Route("/administrator-profile/calls/call/{id:int}")]
         [HttpGet]
-        public IActionResult GetCallInfo(int id)
+        public async Task<IActionResult> GetCallInfoAsync(int id)
         {
-            var call = _administratorLogic.GetCallInfo(id);
+            var call = await _administratorLogic.GetCallInfoAsync(id);
             return Ok(call);
         }
 
 
         [HttpPost("/administrator-profile/customers/phonenumber/check")]/**/
-        public IActionResult CheckPhoneNumberForExistence(string phoneNumber)
+        public async Task<IActionResult> CheckPhoneNumberForExistenceAsync(string phoneNumber)
         {
-            bool isExist = _administratorLogic.CheckPhoneNumberForExistence(phoneNumber);
+            bool isExist = await _administratorLogic.CheckPhoneNumberForExistenceAsync(phoneNumber);
             return Ok(isExist);
         }
 
@@ -87,9 +87,9 @@ namespace TelephoneNetworkProvider.Controllers
         [ServiceFilter(typeof(CustomerExistenceFilterAttribute))]
         [Route("/administrator-profile/customers/customer/{customerId:int}/phonenumber/set")]
         [HttpPost]
-        public IActionResult TryToSetNewPhoneNumber(int customerId, string phoneNumber)
+        public async Task<IActionResult> TryToSetNewPhoneNumberAsync(int customerId, string phoneNumber)
         {
-            bool status = _administratorLogic.TryToSetNewPhoneNumber(customerId, phoneNumber);
+            bool status = await _administratorLogic.TryToSetNewPhoneNumberAsync(customerId, phoneNumber);
             return Ok(status);
         }
 
@@ -97,9 +97,9 @@ namespace TelephoneNetworkProvider.Controllers
         [ServiceFilter(typeof(CustomerExistenceFilterAttribute))]
         [Route("/administrator-profile/customers/customer/{customerId:int}/block")]
         [HttpPost]
-        public IActionResult BlockCustomer(int customerId)
+        public async Task<IActionResult> BlockCustomerAsync(int customerId)
         {
-            _administratorLogic.BlockCustomer(customerId);
+            await _administratorLogic.BlockCustomerAsync(customerId);
             return NoContent();
         }
 
@@ -107,17 +107,9 @@ namespace TelephoneNetworkProvider.Controllers
         [ServiceFilter(typeof(DtoValidationFilterAttribute))]
         [Route("/administrator-profile/customers/create")]
         [HttpPost]
-        public IActionResult CreateCustomer([FromBody] CustomerForCreateInAdministratorDto customer)
+        public async Task<IActionResult> CreateCustomerAsync([FromBody] CustomerForCreateInAdministratorDto customer)
         {
-            try
-            {
-                _administratorLogic.CreateCustomer(customer);
-            }
-            catch (UserExistException e)
-            {
-                return BadRequest(e.Message);
-            }
-
+            await _administratorLogic.CreateCustomerAsync(customer);
             return NoContent();
         }
 
@@ -137,9 +129,9 @@ namespace TelephoneNetworkProvider.Controllers
         [ServiceFilter(typeof(CustomerExistenceFilterAttribute))]
         [Route("/administrator-profile/customers/customer/{customerId:int}/delete")]
         [HttpPost]
-        public IActionResult DeleteCustomer(int customerId, [FromBody] CustomerForUpdateInAdministratorDto customer)
+        public async Task<IActionResult> DeleteCustomerAsync(int customerId, [FromBody] CustomerForUpdateInAdministratorDto customer)
         {
-            _administratorLogic.DeleteCustomer(customerId);
+            await _administratorLogic.DeleteCustomerAsync(customerId);
             return Ok();
         }
 
@@ -148,9 +140,9 @@ namespace TelephoneNetworkProvider.Controllers
         [ServiceFilter(typeof(CustomerExistenceFilterAttribute))]
         [Route("/administrator-profile/customers/customer/{customerId:int}/messages")]
         [HttpGet]
-        public IActionResult GetAdministratorMessagesByCustomerUserId(int customerId, [FromQuery] AdministratorMessageParameters parameters)
+        public async Task<IActionResult> GetAdministratorMessagesByCustomerIdAsync(int customerId, [FromQuery] AdministratorMessageParameters parameters)
         {
-            var messages = _administratorLogic.GetAdministratorMessagesByCustomerId(customerId, parameters);
+            var messages = await _administratorLogic.GetAdministratorMessagesByCustomerIdAsync(customerId, parameters);
             return Ok(messages);
         }
 
@@ -158,9 +150,9 @@ namespace TelephoneNetworkProvider.Controllers
         [ServiceFilter(typeof(CustomerExistenceFilterAttribute))]
         [Route("/administrator-profile/customers/customer/{customerId:int}/time-pasts-from-last-warn-message")]/*!*/
         [HttpGet]
-        public IActionResult TimePastsFromLastWarnMessage(int customerId)
+        public async Task<IActionResult> TimePastsFromLastWarnMessageAsync(int customerId)
         {
-            DateTime time = _administratorLogic.TimePastsFromLastWarnMessage(customerId);
+            DateTime time = await _administratorLogic.TimePastsFromLastWarnMessageAsync(customerId);
             return Ok(time);
         }
     }

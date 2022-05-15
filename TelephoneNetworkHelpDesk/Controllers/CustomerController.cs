@@ -7,6 +7,7 @@ using BussinessLogic;
 using System.Security.Claims;
 using Entities.RequestFeatures;
 using TelephoneNetworkProvider.ActionFilters;
+using System.Threading.Tasks;
 
 namespace TelephoneNetworkProvider.Controllers
 {
@@ -30,9 +31,9 @@ namespace TelephoneNetworkProvider.Controllers
         }
 
         [HttpGet("/customer-profile/info")]
-        public IActionResult GetInfo()
+        public async Task<IActionResult> GetInfoAsync()
         {           
-            var customer = _customerLogic.GetCustomerInfo(customerId);
+            var customer = await _customerLogic.GetCustomerInfoAsync(customerId);
             return Ok(customer);
         }
 
@@ -45,25 +46,25 @@ namespace TelephoneNetworkProvider.Controllers
         }
 
         [HttpPost("/customer-profile/replenish-balance")]
-        public IActionResult ReplenishTheBalance([FromBody] Decimal currency)
+        public async Task<IActionResult> ReplenishTheBalanceAsync([FromBody] Decimal currency)
         {
-            _customerLogic.ReplenishTheBalance(customerId, currency);
+            await _customerLogic.ReplenishTheBalanceAsync(customerId, currency);
             return NoContent();
         }
 
         [ServiceFilter(typeof(CustomerExistenceFilterAttribute))]
         [HttpGet("/customer-profile/customers/{customerId}")]
-        public IActionResult GetCustomerInfo(int customerId)
+        public async Task<IActionResult> GetCustomerInfoAsync(int customerId)
         {
-            var customer = _customerLogic.GetCustomerInfo(customerId);
+            var customer = await _customerLogic.GetCustomerInfoAsync(customerId);
             return Ok(customer);
         }
 
         [ServiceFilter(typeof(ParametersValidationFilterAttribute))]
         [HttpGet("/customer-profile/customers")]
-        public IActionResult GetCustomers([FromQuery] CustomerParameters parameters)
+        public async Task<IActionResult> GetCustomersAsync([FromQuery] CustomerParameters parameters)
         {
-            var customers = _customerLogic.GetCustomers(parameters);
+            var customers = await _customerLogic.GetCustomersAsync(parameters);
             return Ok(customers);
         }
     }

@@ -25,15 +25,9 @@ namespace TelephoneNetworkProvider.Controllers
             _authenticationLogic = authenticationLogic;
         }
 
-        [HttpGet]
-        public IActionResult Index()
-        {
-            return Ok("yeah");
-        }
-
         [ServiceFilter(typeof(DtoValidationFilterAttribute))]
         [HttpPost]
-        public async Task<IActionResult> Authentication(UserForAuthenticationDto user)
+        public async Task<IActionResult> AuthenticateAsync(UserForAuthenticationDto user)
         {
             (bool status, string role) = await _authenticationLogic.ValidateUser(user);
             if (!status)

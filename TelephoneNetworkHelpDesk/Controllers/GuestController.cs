@@ -24,17 +24,17 @@ namespace TelephoneNetworkProvider.Controllers
 
         [ServiceFilter(typeof(CustomerExistenceFilterAttribute))]
         [HttpGet("/guest-profile/customers/{customerId}")]
-        public IActionResult GetCustomerInfo(int customerId)
+        public async Task<IActionResult> GetCustomerInfoAsync(int customerId)
         {
-            var customer = _guestLogic.GetCustomerInfo(customerId);
+            var customer = await _guestLogic.GetCustomerInfoAsync(customerId);
             return Ok(customer);
         }
 
         [ServiceFilter(typeof(ParametersValidationFilterAttribute))]
         [HttpGet("/guest-profile/customers")]
-        public IActionResult GetCustomers([FromQuery] CustomerParameters parameters)
+        public async Task<IActionResult> GetCustomersAsync([FromQuery] CustomerParameters parameters)
         {
-            var customers = _guestLogic.GetCustomers(parameters);
+            var customers = await _guestLogic.GetCustomersAsync(parameters);
             return Ok(customers);
         }
     }
