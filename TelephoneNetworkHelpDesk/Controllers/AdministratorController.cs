@@ -38,10 +38,18 @@ namespace TelephoneNetworkProvider.Controllers
 
         [ServiceFilter(typeof(CustomerExistenceFilterAttribute))]
         [Route("/administrator-profile/customers/customer/{customerId:int}")]
-        [HttpGet]
+        [HttpGet(Name = "GetCustomer")]
         public async Task<IActionResult> GetCustomerInfoAsync(int customerId)
         {
-            var customer = await _administratorLogic.GetCustomerInfoAsync(customerId);
+            CustomerForReadInAdministratorDto customer;
+            try
+            {
+                customer = await _administratorLogic.GetCustomerInfoAsync(customerId);
+            }
+            catch (CustomerDoesntExistException e)
+            {
+                return NotFound(e.Message);
+            }
             return Ok(customer);
         }
 
@@ -52,7 +60,15 @@ namespace TelephoneNetworkProvider.Controllers
         [HttpGet]
         public async Task<IActionResult> GetCustomerCallsAsync(int customerId, [FromQuery] CallParameters parameters)
         {
-            var calls = await _administratorLogic.GetCustomerCallsAsync(customerId, parameters);
+            IEnumerable<CallForReadInAdministratorDto> calls;
+            try
+            {
+                calls = await _administratorLogic.GetCustomerCallsAsync(customerId, parameters);
+            }
+            catch (InvalidOperationException e)
+            {
+                return Conflict(e.Message);
+            }
             return Ok(calls);
         }
 
@@ -69,9 +85,17 @@ namespace TelephoneNetworkProvider.Controllers
         [ServiceFilter(typeof(CallExistenceFilterAttribute))]
         [Route("/administrator-profile/calls/call/{id:int}")]
         [HttpGet]
-        public async Task<IActionResult> GetCallInfoAsync(int id)
+        public async Task<IActionResult> GetCallInfoAsync(int callId)
         {
-            var call = await _administratorLogic.GetCallInfoAsync(id);
+            CallForReadInAdministratorDto call;
+            try
+            {
+                call = await _administratorLogic.GetCallInfoAsync(callId);
+            }
+            catch (CallDoesntExistException e)
+            {
+                return NotFound(e.Message);
+            }
             return Ok(call);
         }
 
@@ -87,9 +111,21 @@ namespace TelephoneNetworkProvider.Controllers
         [ServiceFilter(typeof(CustomerExistenceFilterAttribute))]
         [Route("/administrator-profile/customers/customer/{customerId:int}/phonenumber/set")]
         [HttpPost]
-        public async Task<IActionResult> TryToSetNewPhoneNumberAsync(int customerId, string phoneNumber)
+        public async Task<IActionResult> TryToSetNewPhoneNumberAsync(int customerId, string phoneNumber) //change 'try' to 'set'
         {
-            bool status = await _administratorLogic.TryToSetNewPhoneNumberAsync(customerId, phoneNumber);
+            bool status;
+            try
+            {
+                status = await _administratorLogic.TryToSetNewPhoneNumberAsync(customerId, phoneNumber); /*!*/
+            }
+            catch (CustomerDoesntExistException e)
+            {
+                return NotFound(e.Message);
+            }
+            catch (InvalidOperationException e)
+            {
+                return Conflict(e.Message);
+            }
             return Ok(status);
         }
 
@@ -99,7 +135,18 @@ namespace TelephoneNetworkProvider.Controllers
         [HttpPost]
         public async Task<IActionResult> BlockCustomerAsync(int customerId)
         {
-            await _administratorLogic.BlockCustomerAsync(customerId);
+            try
+            {
+                await _administratorLogic.BlockCustomerAsync(customerId);
+            }
+            catch (CustomerDoesntExistException e)
+            {
+                return NotFound(e.Message);
+            }
+            catch (InvalidOperationException e)
+            {
+                return Conflict(e.Message);
+            }
             return NoContent();
         }
 
@@ -109,8 +156,17 @@ namespace TelephoneNetworkProvider.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCustomerAsync([FromBody] CustomerForCreateInAdministratorDto customer)
         {
-            await _administratorLogic.CreateCustomerAsync(customer);
-            return NoContent();
+            int customerId;
+            CustomerForReadInAdministratorDto customerDto;
+            try
+            {
+                (customerId, customerDto) = await _administratorLogic.CreateCustomerAsync(customer);
+            }
+            catch (InvalidOperationException e)
+            {
+                return Conflict(e.Message);
+            }
+            return CreatedAtRoute("GetCustomer", new { customerId = customerId }, customerDto);
         }
 
 
@@ -120,8 +176,19 @@ namespace TelephoneNetworkProvider.Controllers
         [HttpPut]
         public IActionResult UpdateCustomer(int customerId, [FromBody] CustomerForUpdateInAdministratorDto customer)
         {
-            _administratorLogic.UpdateCustomer(customerId, customer);
-            return Ok();
+            try
+            {
+                _administratorLogic.UpdateCustomerAsync(customerId, customer);
+            }
+            catch (CustomerDoesntExistException e)
+            {
+                return NotFound(e.Message);
+            }
+            catch (InvalidOperationException e)
+            {
+                return Conflict(e.Message);
+            }
+            return NoContent();
         }
 
 
@@ -131,8 +198,19 @@ namespace TelephoneNetworkProvider.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteCustomerAsync(int customerId, [FromBody] CustomerForUpdateInAdministratorDto customer)
         {
-            await _administratorLogic.DeleteCustomerAsync(customerId);
-            return Ok();
+            try 
+            {
+                await _administratorLogic.DeleteCustomerAsync(customerId);
+            }
+            catch (CustomerDoesntExistException e)
+            {
+                return NotFound(e.Message);
+            }
+            catch (InvalidOperationException e)
+            {
+                return Conflict(e.Message);
+            }
+            return NoContent();
         }
 
 
@@ -142,7 +220,15 @@ namespace TelephoneNetworkProvider.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAdministratorMessagesByCustomerIdAsync(int customerId, [FromQuery] AdministratorMessageParameters parameters)
         {
-            var messages = await _administratorLogic.GetAdministratorMessagesByCustomerIdAsync(customerId, parameters);
+            IEnumerable<AdministratorMessageForReadInAdministratorDto> messages;
+            try
+            {
+                messages = await _administratorLogic.GetAdministratorMessagesByCustomerIdAsync(customerId, parameters);
+            }
+            catch (CustomerDoesntExistException e)
+            {
+                return NotFound(e.Message);
+            }
             return Ok(messages);
         }
 
@@ -152,7 +238,15 @@ namespace TelephoneNetworkProvider.Controllers
         [HttpGet]
         public async Task<IActionResult> TimePastsFromLastWarnMessageAsync(int customerId)
         {
-            DateTime time = await _administratorLogic.TimePastsFromLastWarnMessageAsync(customerId);
+            DateTime time;
+            try
+            {
+                time = await _administratorLogic.TimePastsFromLastWarnMessageAsync(customerId);
+            }
+            catch (CustomerDoesntExistException e)
+            {
+                return NotFound(e.Message);
+            }
             return Ok(time);
         }
     }

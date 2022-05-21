@@ -28,14 +28,14 @@ namespace BussinessLogic
             if (!result.Succeeded)
             {
                 var error = result.Errors.FirstOrDefault();
-                throw new InvalidUserDataException($"{error.Code} + {error.Description}");
+                throw new InvalidOperationException($"{error.Code} + {error.Description}");
             }
 
             result = await _userManager.AddToRoleAsync(user, role);
             if (!result.Succeeded)
             {
                 var error = result.Errors.FirstOrDefault();
-                throw new InvalidUserDataException($"{error.Code} + {error.Description}");
+                throw new InvalidOperationException($"{error.Code} + {error.Description}");
             }
             return user;
         }
@@ -46,7 +46,7 @@ namespace BussinessLogic
             if (!result.Succeeded)
             {
                 var error = result.Errors.FirstOrDefault();
-                throw new InvalidUserDataException($"{error.Code} + {error.Description}");
+                throw new InvalidOperationException($"{error.Code} + {error.Description}");
             }
         }
 
@@ -56,7 +56,7 @@ namespace BussinessLogic
             if (!result.Succeeded)
             {
                 var error = result.Errors.FirstOrDefault();
-                throw new InvalidUserDataException($"{error.Code} + {error.Description}");
+                throw new InvalidOperationException($"{error.Code} + {error.Description}");
             }
         }
     }

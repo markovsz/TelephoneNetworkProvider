@@ -19,8 +19,8 @@ namespace BussinessLogic
         Task<IEnumerable<CallForReadInAdministratorDto>> GetCallsAsync(CallParameters parameters);
         Task<bool> CheckCallAsync(int id);
         Task<CallForReadInAdministratorDto> GetCallInfoAsync(int id);
-        Task CreateCustomerAsync(CustomerForCreateInAdministratorDto customerDto);
-        void UpdateCustomer(int customerId, CustomerForUpdateInAdministratorDto customer);
+        Task<(int, CustomerForReadInAdministratorDto)> CreateCustomerAsync(CustomerForCreateInAdministratorDto customerDto);
+        Task UpdateCustomerAsync(int customerId, CustomerForUpdateInAdministratorDto customer);
         Task DeleteCustomerAsync(int customerId);
         Task SendMessageAsync(int customerId, AdministratorMessageForCreateInAdministratorDto messageDto);
         Task<DateTime> TimePastsFromLastWarnMessageAsync(int customerId);

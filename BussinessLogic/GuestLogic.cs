@@ -7,6 +7,7 @@ using Entities.Models;
 using Entities.RequestFeatures;
 using Repository;
 using Repository.GuestRepository;
+using BussinessLogic.Exceptions;
 
 namespace BussinessLogic
 {
@@ -23,9 +24,12 @@ namespace BussinessLogic
 
         public async Task<CustomerForReadInGuestDto> GetCustomerInfoAsync(int customerId)
         {
-            var customers = await _guestManager.Customers.GetCustomerInfoAsync(customerId);
-            var customersDto = _mapper.Map<CustomerForReadInGuestDto>(customers);
-            return customersDto;
+            var customer = await _guestManager.Customers.GetCustomerInfoAsync(customerId);
+            if (customer is null)
+                throw new CustomerDoesntExistException("Customer with this id doesn't exist");
+
+            var customerDto = _mapper.Map<CustomerForReadInGuestDto>(customer);
+            return customerDto;
         }
 
         public async Task<IEnumerable<CustomerForReadInGuestDto>> GetCustomersAsync(CustomerParameters parameters)

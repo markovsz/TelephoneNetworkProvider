@@ -6,13 +6,9 @@ using System.Threading.Tasks;
 
 namespace BussinessLogic.Exceptions
 {
-    public class UserExistException : Exception
+    public class InvalidUserOperationException : Exception
     {
-        public UserExistException()
-        {
-        }
-
-        public UserExistException(string message)
+        public InvalidUserOperationException(string message)
             : base(message)
         {
         }

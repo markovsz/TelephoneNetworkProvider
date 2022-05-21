@@ -10,6 +10,7 @@ using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Repository.CustomerRepository;
+using BussinessLogic.Exceptions;
 
 namespace BussinessLogic
 {
@@ -24,8 +25,31 @@ namespace BussinessLogic
             _mapper = mapper;
         }
 
-        public void UpdateCustomerInfo(int customerId, CustomerForUpdateInCustomerDto customerDto)
+        private async Task<bool> CheckCustomer(int customerId)
         {
+            return (await GetCustomerAsync(customerId, false)) is not null;
+        }
+
+        private async Task<Customer> GetCustomerAsync(int customerId, bool trackChanges)
+        {
+            var customer = await _customerManager.Customer.GetCustomerAsync(customerId, trackChanges);
+            if (customer is null)
+                throw new InvalidOperationException("Customer with this id doesn't exist");
+            return customer;
+        }
+
+        private async Task<Call> GetCallAsync(int callId)
+        {
+            var call = await _customerManager.Calls.GetCallAsync(callId);
+            if (call is null)
+                throw new InvalidOperationException("Call with this id doesn't exist");
+            return call;
+        }
+
+        public async Task UpdateCustomerInfo(int customerId, CustomerForUpdateInCustomerDto customerDto)
+        {
+            if (!(await CheckCustomer(customerId)))
+                throw new CustomerDoesntExistException("Customer with this id doesn't exist");
             var customer = _mapper.Map<Customer>(customerDto);
             customer.Id = customerId;
             _customerManager.Customer.UpdateCustomer(customer);
@@ -35,8 +59,9 @@ namespace BussinessLogic
         {
             if (currency < 0.0m || currency > 50000.0m)
                 throw new ArgumentOutOfRangeException("Currency should be between 0.0 and 50000.0");
-            var customer = await _customerManager.Customer.GetCustomerAsync(customerId, true);
+            var customer = await GetCustomerAsync(customerId, true);
             customer.MoneyBalance += currency;
+            await _customerManager.SaveAsync();
         }
 
         public async Task<IEnumerable<CallForReadInCustomerDto>> GetCallsAsync(int customerId, CallParameters parameters)
@@ -46,16 +71,16 @@ namespace BussinessLogic
             return callsDto;
         }
 
-        public async Task<CallForReadInCustomerDto> GetCallAsync(int id)
+        public async Task<CallForReadInCustomerDto> GetCallInfoAsync(int id)
         {
-            var call = await _customerManager.Calls.GetCallAsync(id);
+            var call = await GetCallAsync(id);
             var callDto = _mapper.Map<CallForReadInCustomerDto>(call);
             return callDto;
         }
 
         public async Task<CustomerForReadInCustomerDto> GetCustomerInfoAsync(int customerId)
         {
-            var customer = await _customerManager.Customer.GetCustomerAsync(customerId, false);
+            var customer = await GetCustomerAsync(customerId, false);
             var customerDto = _mapper.Map<CustomerForReadInCustomerDto>(customer);
             return customerDto;
         }

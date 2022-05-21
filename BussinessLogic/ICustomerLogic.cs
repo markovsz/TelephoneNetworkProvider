@@ -13,9 +13,9 @@ namespace BussinessLogic
     {
         Task ReplenishTheBalanceAsync(int customerId, Decimal currency);
         Task<IEnumerable<CallForReadInCustomerDto>> GetCallsAsync(int customerId, CallParameters parameters);
-        Task<CallForReadInCustomerDto> GetCallAsync(int id);
+        Task<CallForReadInCustomerDto> GetCallInfoAsync(int id);
         Task<IEnumerable<CustomerForReadInCustomerDto>> GetCustomersAsync(CustomerParameters parameters);
         Task<CustomerForReadInCustomerDto> GetCustomerInfoAsync(int customerId);
-        void UpdateCustomerInfo(int customerId, CustomerForUpdateInCustomerDto customerDto);
+        Task UpdateCustomerInfo(int customerId, CustomerForUpdateInCustomerDto customerDto);
     }
 }

@@ -6,13 +6,9 @@ using System.Threading.Tasks;
 
 namespace BussinessLogic.Exceptions
 {
-    public class CustomerBlockedException : Exception
+    public class CustomerDoesntExistException : Exception //404
     {
-        public CustomerBlockedException()
-        {
-        }
-
-        public CustomerBlockedException(string message)
+        public CustomerDoesntExistException(string message)
             : base(message)
         {
         }

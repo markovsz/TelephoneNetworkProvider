@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace BussinessLogic.Exceptions
 {
-    public class InvalidUserDataException : Exception
+    public class CallDoesntExistException : Exception
     {
-        public InvalidUserDataException(string message)
+        public CallDoesntExistException(string message)
             : base(message)
         {
         }
