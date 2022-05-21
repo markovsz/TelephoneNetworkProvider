@@ -35,7 +35,7 @@ namespace Repository.AdministratorRepository
 
         public async Task CreateMessageAsync(AdministratorMessage message) => await CreateAsync(message);
 
-        public async Task DeleteMessage(int id) =>
+        public async Task DeleteMessageAsync(int id) =>
             Delete(await FindByCondition(m => m.Id.Equals(id), true).FirstOrDefaultAsync());
     }
 }

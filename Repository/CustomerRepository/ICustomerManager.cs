@@ -8,9 +8,9 @@ namespace Repository.CustomerRepository
 {
     public interface ICustomerManager
     {
-        ICustomerRepositoryForCustomer Customer { get; }
+        ICustomerRepositoryForCustomer Customers { get; }
         ICallRepositoryForCustomer Calls { get; }
-        IAdministratorMessageRepositoryForCustomer AdministratorMessages { get; }
+        IAdministratorMessageRepositoryForCustomer Messages { get; }
         Task SaveAsync();
     }
 }

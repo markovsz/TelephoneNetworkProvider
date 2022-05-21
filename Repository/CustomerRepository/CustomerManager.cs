@@ -22,7 +22,7 @@ namespace Repository.CustomerRepository
             _customerDataAcquisitionRepository = customerDataAcquisitionRepository;
         }
 
-        public ICustomerRepositoryForCustomer Customer
+        public ICustomerRepositoryForCustomer Customers
         {
             get
             {
@@ -42,7 +42,7 @@ namespace Repository.CustomerRepository
             }
         }
 
-        public IAdministratorMessageRepositoryForCustomer AdministratorMessages
+        public IAdministratorMessageRepositoryForCustomer Messages
         {
             get
             {
