@@ -32,9 +32,9 @@ namespace BussinessLogic
 
         private async Task<Customer> GetCustomerAsync(int customerId, bool trackChanges)
         {
-            var customer = await _customerManager.Customer.GetCustomerAsync(customerId, trackChanges);
+            var customer = await _customerManager.Customers.GetCustomerAsync(customerId, trackChanges);
             if (customer is null)
-                throw new InvalidOperationException("Customer with this id doesn't exist");
+                throw new CustomerDoesntExistException("Customer with this id doesn't exist");
             return customer;
         }
 
@@ -42,7 +42,7 @@ namespace BussinessLogic
         {
             var call = await _customerManager.Calls.GetCallAsync(callId);
             if (call is null)
-                throw new InvalidOperationException("Call with this id doesn't exist");
+                throw new CallDoesntExistException("Call with this id doesn't exist");
             return call;
         }
 
@@ -52,7 +52,7 @@ namespace BussinessLogic
                 throw new CustomerDoesntExistException("Customer with this id doesn't exist");
             var customer = _mapper.Map<Customer>(customerDto);
             customer.Id = customerId;
-            _customerManager.Customer.UpdateCustomer(customer);
+            _customerManager.Customers.UpdateCustomer(customer);
         }
 
         public async Task ReplenishTheBalanceAsync(int customerId, Decimal currency)
@@ -66,6 +66,9 @@ namespace BussinessLogic
 
         public async Task<IEnumerable<CallForReadInCustomerDto>> GetCallsAsync(int customerId, CallParameters parameters)
         {
+            if (!(await CheckCustomer(customerId)))
+                throw new CustomerDoesntExistException("Customer with this id doesn't exist");
+
             var calls = await _customerManager.Calls.GetCallsAsync(customerId, parameters);
             var callsDto = _mapper.Map<IEnumerable<CallForReadInCustomerDto>>(calls);
             return callsDto;
@@ -87,7 +90,7 @@ namespace BussinessLogic
 
         public async Task<IEnumerable<CustomerForReadInCustomerDto>> GetCustomersAsync(CustomerParameters parameters)
         {
-            var customers = await _customerManager.Customer.GetCustomersAsync(parameters);
+            var customers = await _customerManager.Customers.GetCustomersAsync(parameters);
             var customersDto = _mapper.Map<IEnumerable<CustomerForReadInCustomerDto>>(customers);
             return customersDto;
         }
