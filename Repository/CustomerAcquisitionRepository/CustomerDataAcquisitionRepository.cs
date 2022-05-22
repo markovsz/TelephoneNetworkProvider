@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace Repository.CustomerAcquisitionRepository
 {
@@ -16,6 +17,11 @@ namespace Repository.CustomerAcquisitionRepository
             : base(repositoryContext)
         {
         }
+
+        public async Task<Customer> GetCustomerInfoAsync(int customerId, Expression<Func<Customer, bool>> expression, bool trackChanges) =>
+            await FindByCondition(c => c.Id.Equals(customerId), trackChanges)
+                .Where(expression)
+                .FirstOrDefaultAsync();
 
         public async Task<Customer> GetCustomerInfoAsync(int customerId, bool trackChanges) => 
             await FindByCondition(c => c.Id.Equals(customerId), trackChanges)
