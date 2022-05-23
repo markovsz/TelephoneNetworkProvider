@@ -9,6 +9,7 @@ using BussinessLogic;
 using Entities.RequestFeatures;
 using Entities.DataTransferObjects;
 using TelephoneNetworkProvider.ActionFilters;
+using BussinessLogic.Exceptions;
 
 namespace TelephoneNetworkProvider.Controllers
 {
@@ -27,7 +28,15 @@ namespace TelephoneNetworkProvider.Controllers
         [HttpGet("/operator-profile/calls/{id}")]
         public async Task<IActionResult> GetCall(int id)
         {
-            var call = await _operatorLogic.GetCallAsync(id);
+            CallForReadInOperatorDto call;
+            try
+            {
+                call = await _operatorLogic.GetCallAsync(id);
+            }
+            catch (CallDoesntExistException ex)
+            {
+                return NotFound(ex.Message);
+            }
             return Ok(call);
         }
 
@@ -35,7 +44,15 @@ namespace TelephoneNetworkProvider.Controllers
         [HttpGet("/operator-profile/calls")]
         public async Task<IActionResult> GetCallsAsync(CallParameters parameters)
         {
-            var calls = await _operatorLogic.GetCallsAsync(parameters);
+            IEnumerable<CallForReadInOperatorDto> calls;
+            try
+            {
+                calls = await _operatorLogic.GetCallsAsync(parameters);
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                return BadRequest(ex.Message);
+            }
             return Ok(calls);
         }
 
@@ -44,7 +61,15 @@ namespace TelephoneNetworkProvider.Controllers
         [HttpGet("/operator-profile/customers/{customerId}/calls")]
         public async Task<IActionResult> GetCustomerCallsAsync(int customerId, CallParameters parameters)
         {
-            var calls = await _operatorLogic.GetCustomerCallsAsync(customerId, parameters);//TODO
+            IEnumerable<CallForReadInOperatorDto> calls;
+            try
+            {
+                calls = await _operatorLogic.GetCustomerCallsAsync(customerId, parameters);//TODO
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                return BadRequest(ex.Message);
+            }
             return Ok(calls);
         }
 
@@ -52,7 +77,15 @@ namespace TelephoneNetworkProvider.Controllers
         [HttpGet("/operator-profile/customers/{customerId}")]
         public async Task<IActionResult> GetCustomerInfoAsync(int customerId)
         {
-            var customer = await _operatorLogic.GetCustomerInfoAsync(customerId);
+            CustomerForReadInOperatorDto customer;
+            try
+            {
+                customer = await _operatorLogic.GetCustomerInfoAsync(customerId);
+            }
+            catch (CustomerDoesntExistException ex)
+            {
+                return NotFound(ex.Message);
+            }
             return Ok(customer);
         }
 
@@ -60,7 +93,15 @@ namespace TelephoneNetworkProvider.Controllers
         [HttpGet("/operator-profile/customers")]
         public async Task<IActionResult> GetCustomersAsync(CustomerParameters parameters)
         {
-            var customers = await _operatorLogic.GetCustomersAsync(parameters);
+            IEnumerable<CustomerForReadInOperatorDto> customers;
+            try
+            {
+                customers = await _operatorLogic.GetCustomersAsync(parameters);
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                return BadRequest(ex.Message);
+            }
             return Ok(customers);
         }
 
@@ -68,7 +109,14 @@ namespace TelephoneNetworkProvider.Controllers
         [HttpGet("/operator-profile/calls/create")]
         public async Task<IActionResult> CreateCallAsync(CallForCreateInOperatorDto callDto)
         {
-            await _operatorLogic.CreateCallAsync(callDto);
+            try
+            {
+                await _operatorLogic.CreateCallAsync(callDto);
+            }
+            catch (CustomerDoesntExistException ex)
+            {
+                return NotFound(ex.Message);
+            }
             return NoContent();
         }
 
@@ -76,7 +124,14 @@ namespace TelephoneNetworkProvider.Controllers
         [HttpGet("/operator-profile/calls/delete")]
         public async Task<IActionResult> DeleteCallAsync(int id)
         {
-            await _operatorLogic.DeleteCallAsync(id);
+            try
+            {
+                await _operatorLogic.DeleteCallAsync(id);
+            }
+            catch (CallDoesntExistException ex)
+            {
+                return NotFound(ex.Message);
+            }
             return NoContent();
         }
     }

@@ -8,6 +8,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using TelephoneNetworkProvider.ActionFilters;
 using Microsoft.AspNetCore.Authorization;
+using BussinessLogic.Exceptions;
+using Entities.DataTransferObjects;
 
 namespace TelephoneNetworkProvider.Controllers
 {
@@ -26,7 +28,16 @@ namespace TelephoneNetworkProvider.Controllers
         [HttpGet("/guest-profile/customers/{customerId}")]
         public async Task<IActionResult> GetCustomerInfoAsync(int customerId)
         {
-            var customer = await _guestLogic.GetCustomerInfoAsync(customerId);
+
+            CustomerForReadInGuestDto customer;
+            try
+            {
+                customer = await _guestLogic.GetCustomerInfoAsync(customerId);
+            }
+            catch (CustomerDoesntExistException ex)
+            {
+                return NotFound(ex.Message);
+            }
             return Ok(customer);
         }
 
@@ -34,7 +45,15 @@ namespace TelephoneNetworkProvider.Controllers
         [HttpGet("/guest-profile/customers")]
         public async Task<IActionResult> GetCustomersAsync([FromQuery] CustomerParameters parameters)
         {
-            var customers = await _guestLogic.GetCustomersAsync(parameters);
+            IEnumerable<CustomerForReadInGuestDto> customers;
+            try
+            {
+                customers = await _guestLogic.GetCustomersAsync(parameters);
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                return BadRequest(ex.Message);
+            }
             return Ok(customers);
         }
     }
