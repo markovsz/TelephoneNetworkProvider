@@ -21,9 +21,9 @@ namespace Repository.OperatorRepository
         }
 
         public async Task<IEnumerable<Customer>> GetCustomersAsync(CustomerParameters parameters) =>
-            await _customerDataAcquisitionRepository.GetCustomersAsync(parameters);
+            await _customerDataAcquisitionRepository.GetCustomersAsync(c => !c.IsBlocked && !c.IsPhoneNumberHided, parameters);
 
         public async Task<Customer> GetCustomerInfoAsync(int customerId) =>
-            await _customerDataAcquisitionRepository.GetCustomerInfoAsync(customerId, false);
+            await _customerDataAcquisitionRepository.GetCustomerInfoAsync(customerId, c => !c.IsBlocked && !c.IsPhoneNumberHided, false);
     }
 }

@@ -24,6 +24,6 @@ namespace Repository.GuestRepository
             await _customerDataAcquisitionRepository.GetCustomerInfoAsync(customerId, c => !c.IsBlocked && !c.IsPhoneNumberHided, false);
 
         public async Task<IEnumerable<Customer>> GetCustomersAsync(CustomerParameters parameters) =>
-            await _customerDataAcquisitionRepository.GetCustomersAsync(parameters);
+            await _customerDataAcquisitionRepository.GetCustomersAsync(c => !c.IsBlocked && !c.IsPhoneNumberHided, parameters);
     }
 }

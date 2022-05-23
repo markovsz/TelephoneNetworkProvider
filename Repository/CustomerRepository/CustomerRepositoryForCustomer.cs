@@ -23,10 +23,10 @@ namespace Repository.CustomerRepository
         }
 
         public async Task<Customer> GetCustomerAsync(int customerId, bool trackChanges) =>
-            await _customerDataAcquisitionRepository.GetCustomerInfoAsync(customerId, trackChanges);
+            await _customerDataAcquisitionRepository.GetCustomerInfoAsync(customerId, c => !c.IsBlocked && !c.IsPhoneNumberHided, trackChanges);
 
         public async Task<IEnumerable<Customer>> GetCustomersAsync(CustomerParameters parameters) =>
-            await _customerDataAcquisitionRepository.GetCustomersAsync(parameters);
+            await _customerDataAcquisitionRepository.GetCustomersAsync(c => !c.IsBlocked && !c.IsPhoneNumberHided, parameters);
             
         public void UpdateCustomer(Customer customer) => Update(customer);
         public void DeleteCustomer(Customer customer) => Delete(customer);
