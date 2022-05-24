@@ -25,7 +25,7 @@ namespace TelephoneNetworkProvider.Controllers
         }
 
         [ServiceFilter(typeof(CallExistenceFilterAttribute))]
-        [HttpGet("/operator-profile/calls/{id}")]
+        [HttpGet("/operator-profile/calls/call/{id}")]
         public async Task<IActionResult> GetCall(int id)
         {
             CallForReadInOperatorDto call;
@@ -58,7 +58,7 @@ namespace TelephoneNetworkProvider.Controllers
 
         [ServiceFilter(typeof(ParametersValidationFilterAttribute))]
         [ServiceFilter(typeof(CustomerExistenceFilterAttribute))]
-        [HttpGet("/operator-profile/customers/{customerId}/calls")]
+        [HttpGet("/operator-profile/customers/customer/{customerId}/calls")]
         public async Task<IActionResult> GetCustomerCallsAsync(int customerId, CallParameters parameters)
         {
             IEnumerable<CallForReadInOperatorDto> calls;
@@ -74,7 +74,7 @@ namespace TelephoneNetworkProvider.Controllers
         }
 
         [ServiceFilter(typeof(CustomerExistenceFilterAttribute))]
-        [HttpGet("/operator-profile/customers/{customerId}")]
+        [HttpGet("/operator-profile/customers/customer/{customerId}")]
         public async Task<IActionResult> GetCustomerInfoAsync(int customerId)
         {
             CustomerForReadInOperatorDto customer;

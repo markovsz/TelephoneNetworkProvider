@@ -32,13 +32,20 @@ namespace TelephoneNetworkProvider.Controllers
         [HttpGet("/administrator-profile/customers")]
         public async Task<IActionResult> GetCustomersAsync([FromQuery] CustomerParameters parameters)
         {
-            var customers = await _administratorLogic.GetCustomersAsync(parameters);
+            IEnumerable<CustomerForReadInAdministratorDto> customers;
+            try
+            {
+                customers = await _administratorLogic.GetCustomersAsync(parameters);
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                return BadRequest(ex.Message);
+            }
             return Ok(customers);
         }
 
         [ServiceFilter(typeof(CustomerExistenceFilterAttribute))]
-        [Route("/administrator-profile/customers/customer/{customerId:int}")]
-        [HttpGet(Name = "GetCustomer")]
+        [HttpGet("/administrator-profile/customers/customer/{customerId:int}", Name = "GetCustomer")]
         public async Task<IActionResult> GetCustomerInfoAsync(int customerId)
         {
             CustomerForReadInAdministratorDto customer;
@@ -56,8 +63,7 @@ namespace TelephoneNetworkProvider.Controllers
 
         [ServiceFilter(typeof(ParametersValidationFilterAttribute))]
         [ServiceFilter(typeof(CustomerExistenceFilterAttribute))]
-        [Route("/administrator-profile/customers/customer/{customerId:int}/calls")]
-        [HttpGet]
+        [HttpGet("/administrator-profile/customers/customer/{customerId:int}/calls")]
         public async Task<IActionResult> GetCustomerCallsAsync(int customerId, [FromQuery] CallParameters parameters)
         {
             IEnumerable<CallForReadInAdministratorDto> calls;
@@ -77,14 +83,21 @@ namespace TelephoneNetworkProvider.Controllers
         [HttpGet("/administrator-profile/calls")]
         public async Task<IActionResult> GetCallsAsync([FromQuery] CallParameters parameters)
         {
-            var calls = await _administratorLogic.GetCallsAsync(parameters);
+            IEnumerable<CallForReadInAdministratorDto> calls;
+            try
+            {
+                calls = await _administratorLogic.GetCallsAsync(parameters);
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                return BadRequest(ex.Message);
+            }
             return Ok(calls);
         }
 
 
         [ServiceFilter(typeof(CallExistenceFilterAttribute))]
-        [Route("/administrator-profile/calls/call/{id:int}")]
-        [HttpGet]
+        [HttpGet("/administrator-profile/calls/call/{id:int}")]
         public async Task<IActionResult> GetCallInfoAsync(int callId)
         {
             CallForReadInAdministratorDto call;
@@ -100,7 +113,7 @@ namespace TelephoneNetworkProvider.Controllers
         }
 
 
-        [HttpPost("/administrator-profile/customers/phonenumber/check")]/**/
+        [HttpPost("/administrator-profile/customers/phonenumber/check")]
         public async Task<IActionResult> CheckPhoneNumberForExistenceAsync(string phoneNumber)
         {
             bool isExist = await _administratorLogic.CheckPhoneNumberForExistenceAsync(phoneNumber);
@@ -109,8 +122,7 @@ namespace TelephoneNetworkProvider.Controllers
 
 
         [ServiceFilter(typeof(CustomerExistenceFilterAttribute))]
-        [Route("/administrator-profile/customers/customer/{customerId:int}/phonenumber/set")]
-        [HttpPost]
+        [HttpPost("/administrator-profile/customers/customer/{customerId:int}/phonenumber/set")]
         public async Task<IActionResult> TryToSetNewPhoneNumberAsync(int customerId, string phoneNumber) //change 'try' to 'set'
         {
             bool status;
@@ -131,8 +143,7 @@ namespace TelephoneNetworkProvider.Controllers
 
 
         [ServiceFilter(typeof(CustomerExistenceFilterAttribute))]
-        [Route("/administrator-profile/customers/customer/{customerId:int}/block")]
-        [HttpPost]
+        [HttpPost("/administrator-profile/customers/customer/{customerId:int}/block")]
         public async Task<IActionResult> BlockCustomerAsync(int customerId)
         {
             try
@@ -152,8 +163,7 @@ namespace TelephoneNetworkProvider.Controllers
 
 
         [ServiceFilter(typeof(DtoValidationFilterAttribute))]
-        [Route("/administrator-profile/customers/create")]
-        [HttpPost]
+        [HttpPost("/administrator-profile/customers/create")]
         public async Task<IActionResult> CreateCustomerAsync([FromBody] CustomerForCreateInAdministratorDto customer)
         {
             int customerId;
@@ -172,8 +182,7 @@ namespace TelephoneNetworkProvider.Controllers
 
         [ServiceFilter(typeof(DtoValidationFilterAttribute))]
         [ServiceFilter(typeof(CustomerExistenceFilterAttribute))]
-        [Route("/administrator-profile/customers/customer/{customerId:int}/update")]
-        [HttpPut]
+        [HttpPut("/administrator-profile/customers/customer/{customerId:int}/update")]
         public IActionResult UpdateCustomer(int customerId, [FromBody] CustomerForUpdateInAdministratorDto customer)
         {
             try
@@ -194,8 +203,7 @@ namespace TelephoneNetworkProvider.Controllers
 
         [ServiceFilter(typeof(DtoValidationFilterAttribute))]
         [ServiceFilter(typeof(CustomerExistenceFilterAttribute))]
-        [Route("/administrator-profile/customers/customer/{customerId:int}/delete")]
-        [HttpPost]
+        [HttpPost("/administrator-profile/customers/customer/{customerId:int}/delete")]
         public async Task<IActionResult> DeleteCustomerAsync(int customerId, [FromBody] CustomerForUpdateInAdministratorDto customer)
         {
             try 
@@ -216,8 +224,7 @@ namespace TelephoneNetworkProvider.Controllers
 
         [ServiceFilter(typeof(ParametersValidationFilterAttribute))]
         [ServiceFilter(typeof(CustomerExistenceFilterAttribute))]
-        [Route("/administrator-profile/customers/customer/{customerId:int}/messages")]
-        [HttpGet]
+        [HttpGet("/administrator-profile/customers/customer/{customerId:int}/messages")]
         public async Task<IActionResult> GetAdministratorMessagesByCustomerIdAsync(int customerId, [FromQuery] AdministratorMessageParameters parameters)
         {
             IEnumerable<AdministratorMessageForReadInAdministratorDto> messages;
@@ -234,8 +241,7 @@ namespace TelephoneNetworkProvider.Controllers
 
 
         [ServiceFilter(typeof(CustomerExistenceFilterAttribute))]
-        [Route("/administrator-profile/customers/customer/{customerId:int}/time-pasts-from-last-warn-message")]/*!*/
-        [HttpGet]
+        [HttpGet("/administrator-profile/customers/customer/{customerId:int}/time-pasts-from-last-warn-message")]/*!*/
         public async Task<IActionResult> TimePastsFromLastWarnMessageAsync(int customerId)
         {
             DateTime time;

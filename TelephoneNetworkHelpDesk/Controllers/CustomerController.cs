@@ -77,7 +77,7 @@ namespace TelephoneNetworkProvider.Controllers
         }
 
         [ServiceFilter(typeof(CustomerExistenceFilterAttribute))]
-        [HttpGet("/customer-profile/customers/{customerId}")]
+        [HttpGet("/customer-profile/customers/customer/{customerId:int}")]
         public async Task<IActionResult> GetCustomerInfoAsync(int customerId)
         {
             CustomerForReadInCustomerDto customer;
