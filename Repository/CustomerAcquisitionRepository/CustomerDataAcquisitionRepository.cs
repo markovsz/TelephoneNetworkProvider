@@ -31,5 +31,11 @@ namespace Repository.CustomerAcquisitionRepository
             await FindAll(false)
                 .CustomerParametersHandler(parameters)
                 .ToListAsync();
+
+        public async Task<IEnumerable<Customer>> GetCustomersAsync(Expression<Func<Customer, bool>> expression, CustomerParameters parameters) =>
+            await FindAll(false)
+                .Where(expression)
+                .CustomerParametersHandler(parameters)
+                .ToListAsync();
     }
 }
