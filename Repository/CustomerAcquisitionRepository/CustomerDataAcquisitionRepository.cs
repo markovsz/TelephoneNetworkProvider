@@ -18,12 +18,12 @@ namespace Repository.CustomerAcquisitionRepository
         {
         }
 
-        public async Task<Customer> GetCustomerInfoAsync(int customerId, Expression<Func<Customer, bool>> expression, bool trackChanges) =>
+        public async Task<Customer> GetCustomerAsync(int customerId, Expression<Func<Customer, bool>> expression, bool trackChanges) =>
             await FindByCondition(c => c.Id.Equals(customerId), trackChanges)
                 .Where(expression)
                 .FirstOrDefaultAsync();
 
-        public async Task<Customer> GetCustomerInfoAsync(int customerId, bool trackChanges) => 
+        public async Task<Customer> GetCustomerAsync(int customerId, bool trackChanges) => 
             await FindByCondition(c => c.Id.Equals(customerId), trackChanges)
                 .FirstOrDefaultAsync();
 

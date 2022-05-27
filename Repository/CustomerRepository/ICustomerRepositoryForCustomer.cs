@@ -14,6 +14,6 @@ namespace Repository.CustomerRepository
         Task<IEnumerable<Customer>> GetCustomersAsync(CustomerParameters parameters);
         void UpdateCustomer(Customer customer);
         void DeleteCustomer(Customer customer);
-        Task DeleteCustomerByUserIdAsync(int customerId);
+        Task DeleteCustomerByIdAsync(int customerId);
     }
 }

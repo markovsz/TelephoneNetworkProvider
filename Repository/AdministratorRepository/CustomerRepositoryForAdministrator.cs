@@ -23,11 +23,11 @@ namespace Repository.AdministratorRepository
             _customerDataAcquisitionRepository = customerDataAcquisitionRepository;
         }
 
-        public async Task<IEnumerable<Customer>> GetCustomersAsync(CustomerParameters parameters, bool trackChanges) =>
+        public async Task<IEnumerable<Customer>> GetCustomersAsync(CustomerParameters parameters) =>
             await _customerDataAcquisitionRepository.GetCustomersAsync(parameters);
 
-        public async Task<Customer> GetCustomerInfoAsync(int customerId, bool trackChanges) =>
-            await _customerDataAcquisitionRepository.GetCustomerInfoAsync(customerId, trackChanges);
+        public async Task<Customer> GetCustomerAsync(int customerId, bool trackChanges) =>
+            await _customerDataAcquisitionRepository.GetCustomerAsync(customerId, trackChanges);
 
         public async Task AddCustomerAsync(Customer customer) => await CreateAsync(customer);
 
@@ -35,8 +35,8 @@ namespace Repository.AdministratorRepository
 
         public void DeleteCustomer(Customer customer) => Delete(customer);
 
-        public async Task DeleteCustomerByUserIdAsync(int customerId) =>
-            Delete(await GetCustomerInfoAsync(customerId, true));
+        public async Task DeleteCustomerByIdAsync(int customerId) =>
+            Delete(await GetCustomerAsync(customerId, true));
         
         public async Task<Customer> FindCustomerByPhoneNumberAsync(string phoneNumber, bool trackChanges) =>
             await FindByCondition(c => c.PhoneNumber.Equals(phoneNumber), trackChanges)

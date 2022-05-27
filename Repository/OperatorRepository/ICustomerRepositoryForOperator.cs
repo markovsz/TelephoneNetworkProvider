@@ -11,6 +11,7 @@ namespace Repository.OperatorRepository
     public interface ICustomerRepositoryForOperator
     {
         Task<IEnumerable<Customer>> GetCustomersAsync(CustomerParameters parameters);
-        Task<Customer> GetCustomerInfoAsync(int customerId);
+        Task<Customer> GetCustomerAsync(int customerId);
+        Task<Customer> GetUnblockedCustomerAsync(int customerId);
     }
 }

@@ -13,7 +13,7 @@ namespace Repository.CustomerAcquisitionRepository
     {
         Task<IEnumerable<Customer>> GetCustomersAsync(CustomerParameters parameters);
         Task<IEnumerable<Customer>> GetCustomersAsync(Expression<Func<Customer, bool>> expression, CustomerParameters parameters);
-        Task<Customer> GetCustomerInfoAsync(int customerId, bool trackChanges);
-        Task<Customer> GetCustomerInfoAsync(int customerId, Expression<Func<Customer, bool>> expression, bool trackChanges);
+        Task<Customer> GetCustomerAsync(int customerId, bool trackChanges);
+        Task<Customer> GetCustomerAsync(int customerId, Expression<Func<Customer, bool>> expression, bool trackChanges);
     }
 }

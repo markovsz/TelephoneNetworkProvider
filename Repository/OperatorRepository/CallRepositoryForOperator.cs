@@ -17,8 +17,8 @@ namespace Repository.OperatorRepository
         {
         }
 
-        public async Task<IEnumerable<Call>> GetCallsAsync(CallParameters parameters, bool trackChanges) =>
-            await FindAll(trackChanges)
+        public async Task<IEnumerable<Call>> GetCallsAsync(CallParameters parameters) =>
+            await FindAll(false)
             .CallParametersHandler(parameters)
             .ToListAsync();
 
@@ -27,7 +27,7 @@ namespace Repository.OperatorRepository
             .CallParametersHandler(parameters)
             .ToListAsync();
 
-        public async Task<Call> GetCallInfoAsync(int id, bool trackChanges) =>
+        public async Task<Call> GetCallAsync(int id, bool trackChanges) =>
             await FindByCondition(c => c.Id.Equals(id), trackChanges)
             .FirstOrDefaultAsync();
 

@@ -20,8 +20,8 @@ namespace Repository.GuestRepository
             _customerDataAcquisitionRepository = customerDataAcquisitionRepository;
         }
 
-        public async Task<Customer> GetCustomerInfoAsync(int customerId) =>
-            await _customerDataAcquisitionRepository.GetCustomerInfoAsync(customerId, c => !c.IsBlocked && !c.IsPhoneNumberHided, false);
+        public async Task<Customer> GetCustomerAsync(int customerId) =>
+            await _customerDataAcquisitionRepository.GetCustomerAsync(customerId, c => !c.IsBlocked && !c.IsPhoneNumberHided, false);
 
         public async Task<IEnumerable<Customer>> GetCustomersAsync(CustomerParameters parameters) =>
             await _customerDataAcquisitionRepository.GetCustomersAsync(c => !c.IsBlocked && !c.IsPhoneNumberHided, parameters);

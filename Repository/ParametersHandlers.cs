@@ -46,8 +46,6 @@ namespace Repository
 
         public static IQueryable<Customer> CustomerParametersHandler(this IQueryable<Customer> customers, CustomerParameters parameters)
         {
-            //TODO
-
             if (parameters.NamePart is not null)
                 customers = customers
                     .Where(c => c.Name.Contains(parameters.NamePart));
@@ -70,7 +68,6 @@ namespace Repository
 
         public static IQueryable<AdministratorMessage> AdministratorMessageParametersHandler(this IQueryable<AdministratorMessage> messages, AdministratorMessageParameters parameters)
         {
-            //TODO
             if (parameters.customerId.HasValue)
                 messages = messages
                     .Where(m => m.CustomerId.Equals(parameters.customerId.Value));
@@ -88,7 +85,7 @@ namespace Repository
             int pageSize = RequestParameters.MaxPageSize;
             if (parameters.PageSize.HasValue)
             {
-                if (parameters.PageSize.Value > 0 &&
+                if (parameters.PageSize.Value > 1 &&
                 parameters.PageSize.Value <= RequestParameters.MaxPageSize)
                 {
                     pageSize = parameters.PageSize.Value;
@@ -103,7 +100,7 @@ namespace Repository
             int customersCountOffset = (customersCount == 0 ? 1 : 0);
             if (parameters.PageNumber < 1 || parameters.PageNumber > (customersCount + pageSize - 1 + customersCountOffset) / pageSize)
             {
-                throw new ArgumentOutOfRangeException();//PageNumberOutOfRangeException();
+                throw new ArgumentOutOfRangeException();
             }
 
             return elements

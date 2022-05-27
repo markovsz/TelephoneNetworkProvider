@@ -11,6 +11,6 @@ namespace Repository.GuestRepository
     public interface ICustomerRepositoryForGuest
     {
         Task<IEnumerable<Customer>> GetCustomersAsync(CustomerParameters parameters);
-        Task<Customer> GetCustomerInfoAsync(int customerId);
+        Task<Customer> GetCustomerAsync(int customerId);
     }
 }
