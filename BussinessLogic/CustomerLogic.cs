@@ -27,7 +27,7 @@ namespace BussinessLogic
 
         private async Task<bool> CheckCustomer(int customerId)
         {
-            return (await GetCustomerAsync(customerId, false)) is not null;
+            return (await _customerManager.Customers.GetCustomerAsync(customerId, false)) is not null;
         }
 
         private async Task<Customer> GetCustomerAsync(int customerId, bool trackChanges)
@@ -36,14 +36,6 @@ namespace BussinessLogic
             if (customer is null)
                 throw new CustomerDoesntExistException("Customer with this id doesn't exist");
             return customer;
-        }
-
-        private async Task<Call> GetCallAsync(int callId)
-        {
-            var call = await _customerManager.Calls.GetCallAsync(callId);
-            if (call is null)
-                throw new CallDoesntExistException("Call with this id doesn't exist");
-            return call;
         }
 
         public async Task UpdateCustomerInfo(int customerId, CustomerForUpdateInCustomerDto customerDto)
@@ -64,7 +56,7 @@ namespace BussinessLogic
             await _customerManager.SaveAsync();
         }
 
-        public async Task<IEnumerable<CallForReadInCustomerDto>> GetCallsAsync(int customerId, CallParameters parameters)
+        public async Task<IEnumerable<CallForReadInCustomerDto>> GetCallsInfoAsync(int customerId, CallParameters parameters)
         {
             if (!(await CheckCustomer(customerId)))
                 throw new CustomerDoesntExistException("Customer with this id doesn't exist");
@@ -74,9 +66,12 @@ namespace BussinessLogic
             return callsDto;
         }
 
-        public async Task<CallForReadInCustomerDto> GetCallInfoAsync(int id)
+        public async Task<CallForReadInCustomerDto> GetCallInfoAsync(int callId)
         {
-            var call = await GetCallAsync(id);
+            var call = await _customerManager.Calls.GetCallAsync(callId);
+            if (call is null)
+                throw new CallDoesntExistException("Call with this id doesn't exist");
+
             var callDto = _mapper.Map<CallForReadInCustomerDto>(call);
             return callDto;
         }
@@ -88,7 +83,7 @@ namespace BussinessLogic
             return customerDto;
         }
 
-        public async Task<IEnumerable<CustomerForReadInCustomerDto>> GetCustomersAsync(CustomerParameters parameters)
+        public async Task<IEnumerable<CustomerForReadInCustomerDto>> GetCustomersInfoAsync(CustomerParameters parameters)
         {
             var customers = await _customerManager.Customers.GetCustomersAsync(parameters);
             var customersDto = _mapper.Map<IEnumerable<CustomerForReadInCustomerDto>>(customers);

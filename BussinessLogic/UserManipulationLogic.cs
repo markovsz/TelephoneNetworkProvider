@@ -21,7 +21,6 @@ namespace BussinessLogic
 
         public async Task<User> CreateUserAsync(string login, string password, string role)
         {
-            //TODO
             User user = new User(login);
             user.UserName = login;
             var result = await _userManager.CreateAsync(user, password);

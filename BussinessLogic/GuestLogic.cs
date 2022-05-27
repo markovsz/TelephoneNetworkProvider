@@ -24,7 +24,7 @@ namespace BussinessLogic
 
         public async Task<CustomerForReadInGuestDto> GetCustomerInfoAsync(int customerId)
         {
-            var customer = await _guestManager.Customers.GetCustomerInfoAsync(customerId);
+            var customer = await _guestManager.Customers.GetCustomerAsync(customerId);
             if (customer is null)
                 throw new CustomerDoesntExistException("Customer with this id doesn't exist");
 
@@ -32,7 +32,7 @@ namespace BussinessLogic
             return customerDto;
         }
 
-        public async Task<IEnumerable<CustomerForReadInGuestDto>> GetCustomersAsync(CustomerParameters parameters)
+        public async Task<IEnumerable<CustomerForReadInGuestDto>> GetCustomersInfoAsync(CustomerParameters parameters)
         {
             var customers = await _guestManager.Customers.GetCustomersAsync(parameters);
             var customersDto = _mapper.Map<IEnumerable<CustomerForReadInGuestDto>>(customers);

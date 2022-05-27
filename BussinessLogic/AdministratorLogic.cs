@@ -13,6 +13,8 @@ namespace BussinessLogic
 {
     public class AdministratorLogic : IAdministratorLogic
     {
+        const decimal StartingMoneyBalance = 0.0m;
+
         private IUserManipulationLogic _userManipulationLogic;
         private IAdministratorManager _administratorManager;
         private IMapper _mapper;
@@ -27,7 +29,7 @@ namespace BussinessLogic
 
         private async Task<Customer> GetCustomerAsync(int customerId, bool trackChanges)
         {
-            var customer = await _administratorManager.Customers.GetCustomerInfoAsync(customerId, trackChanges);
+            var customer = await _administratorManager.Customers.GetCustomerAsync(customerId, trackChanges);
             if (customer is null)
                 throw new CustomerDoesntExistException("Customer with this id doesn't exist");
             return customer;
@@ -41,14 +43,9 @@ namespace BussinessLogic
             return call;
         }
 
-        public async Task<bool> CheckCallAsync(int id)
+        private async Task<bool> CheckCustomerAsync(int customerId)
         {
-            return (await _administratorManager.Calls.GetCallAsync(id)) is not null;
-        }
-
-        public async Task<bool> CheckCustomerAsync(int customerId)
-        {
-            return (await _administratorManager.Customers.GetCustomerInfoAsync(customerId, false)) is not null;
+            return (await _administratorManager.Customers.GetCustomerAsync(customerId, false)) is not null;
         }
 
         public async Task<CallForReadInAdministratorDto> GetCallInfoAsync(int callId)
@@ -58,14 +55,14 @@ namespace BussinessLogic
             return callDto;
         }
 
-        public async Task<IEnumerable<CallForReadInAdministratorDto>> GetCallsAsync(CallParameters parameters)
+        public async Task<IEnumerable<CallForReadInAdministratorDto>> GetCallsInfoAsync(CallParameters parameters)
         {
             var call = await _administratorManager.Calls.GetCallsAsync(parameters);
             var callDto = _mapper.Map<IEnumerable<CallForReadInAdministratorDto>>(call);
             return callDto;
         }
 
-        public async Task<IEnumerable<CallForReadInAdministratorDto>> GetCustomerCallsAsync(int customerId, CallParameters parameters)
+        public async Task<IEnumerable<CallForReadInAdministratorDto>> GetCustomerCallsInfoAsync(int customerId, CallParameters parameters)
         {
             if (!(await CheckCustomerAsync(customerId)))
                 throw new CustomerDoesntExistException("Customer with this id doesn't exist");
@@ -82,9 +79,9 @@ namespace BussinessLogic
             return customerDto;
         }
 
-        public async Task<IEnumerable<CustomerForReadInAdministratorDto>> GetCustomersAsync(CustomerParameters parameters)
+        public async Task<IEnumerable<CustomerForReadInAdministratorDto>> GetCustomersInfoAsync(CustomerParameters parameters)
         {
-            var customers = await _administratorManager.Customers.GetCustomersAsync(parameters, false);
+            var customers = await _administratorManager.Customers.GetCustomersAsync(parameters);
             var customersDto = _mapper.Map<IEnumerable<CustomerForReadInAdministratorDto>>(customers);
             return customersDto;
         }
@@ -136,7 +133,7 @@ namespace BussinessLogic
             
             var userCreationResult = _userManipulationLogic.CreateUserAsync(customerDto.Login, customerDto.Password, "Customer");
             Customer customer = _mapper.Map<Customer>(customerDto);
-            customer.MoneyBalance = 0;
+            customer.MoneyBalance = StartingMoneyBalance;
             customer.RegistrationDate = DateTime.Now;
             customer.IsBlocked = false;
 
@@ -153,7 +150,7 @@ namespace BussinessLogic
             return (await _administratorManager.Customers.FindCustomerByPhoneNumberAsync(phoneNumber, false)) is not null;
         }
 
-        public async Task<bool> TryToSetNewPhoneNumberAsync(int customerId, string phoneNumber) /*!*/
+        public async Task<bool> TryToSetNewPhoneNumberAsync(int customerId, string phoneNumber)
         {
             bool isAny = await CheckPhoneNumberForExistenceAsync(phoneNumber);
             if (!isAny)
@@ -174,6 +171,9 @@ namespace BussinessLogic
             var messages = await _administratorManager.Messages.GetCustomerWarningMessagesFromTimeAsync(customerId, customer.LastBlockTime);
 
             if (messages.Count() >= 3) customer.IsBlocked = true;
+            else
+                throw new InvalidOperationException("Too few messages to block customer");
+
             await _administratorManager.SaveAsync();
         }
 
@@ -181,7 +181,8 @@ namespace BussinessLogic
         {
             if (!(await CheckCustomerAsync(customerId)))
                 throw new CustomerDoesntExistException("Customer with this id doesn't exist");
-            await _administratorManager.Customers.DeleteCustomerByUserIdAsync(customerId);
+
+            await _administratorManager.Customers.DeleteCustomerByIdAsync(customerId);
         }
 
         public async Task UpdateCustomerAsync(int customerId, CustomerForUpdateInAdministratorDto customerDto)
