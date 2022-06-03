@@ -12,8 +12,6 @@ namespace TelephoneNetworkProvider
     {
         public MappingProfile()
         {
-            CreateMap<RegistrationDto, Customer>();
-
             CreateMap<Customer, CustomerForReadInAdministratorDto>().ReverseMap();
             CreateMap<Customer, CustomerForReadInCustomerDto>();
             CreateMap<Customer, CustomerForReadInGuestDto>().ReverseMap();
@@ -34,11 +32,7 @@ namespace TelephoneNetworkProvider
             CreateMap<Call, CallForCreateInOperatorDto>();
 
 
-
             CreateMap<AdministratorMessage, AdministratorMessageForReadInAdministratorDto>();
-            //CreateMap<AdministratorMessage, AdministratorMessageForReadInCustomerDto>();
-            //CreateMap<AdministratorMessage, AdministratorMessageForReadInGuestDto>();
-            //CreateMap<AdministratorMessage, AdministratorMessageForReadInOperatorDto>();
         }
     }
 }
