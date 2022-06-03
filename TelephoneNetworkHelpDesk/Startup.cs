@@ -9,6 +9,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using AutoMapper;
+using System.IO;
+using NLog;
 
 namespace TelephoneNetworkProvider
 {
@@ -16,6 +18,7 @@ namespace TelephoneNetworkProvider
     {
         public Startup(IConfiguration configuration)
         {
+            LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
             Configuration = configuration;
         }
         public IConfiguration Configuration { get; set; }
@@ -31,8 +34,9 @@ namespace TelephoneNetworkProvider
             services.ConfigureJWT(Configuration);
             services.AddAutoMapper(typeof(MappingProfile));
             services.ConfigureBussinessLogic();
+            services.ConfigureLogger();
             services.ConfigureActionFilters();
-            services.AddMvc();
+            services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,8 +53,6 @@ namespace TelephoneNetworkProvider
                 s.SwaggerEndpoint("/swagger/v1/swagger.json", "Code Maze API v1");
                 s.SwaggerEndpoint("/swagger/v2/swagger.json", "Code Maze API v2");
             });
-
-            app.UseStaticFiles();
 
             app.UseRouting();
 
