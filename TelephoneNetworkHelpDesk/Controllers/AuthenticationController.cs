@@ -11,6 +11,7 @@ using Repository;
 using TelephoneNetworkProvider.ActionFilters;
 using BussinessLogic;
 using Microsoft.AspNetCore.Authorization;
+using Logger;
 
 namespace TelephoneNetworkProvider.Controllers
 {
@@ -19,20 +20,27 @@ namespace TelephoneNetworkProvider.Controllers
     public class AuthenticationController : Controller
     {
         private IAuthenticationLogic _authenticationLogic;
+        private ILoggerManager _logger;
 
-        public AuthenticationController(IAuthenticationLogic authenticationLogic)
+        public AuthenticationController(IAuthenticationLogic authenticationLogic, ILoggerManager logger)
         {
             _authenticationLogic = authenticationLogic;
+            _logger = logger;
         }
 
         [ServiceFilter(typeof(DtoValidationFilterAttribute))]
         [HttpPost]
         public async Task<IActionResult> AuthenticateAsync(UserForAuthenticationDto user)
         {
-            (bool status, string role) = await _authenticationLogic.ValidateUser(user);
-            if (!status)
+            string role;
+            try
             {
-                return BadRequest();//NO! (I don't remember)
+                role = await _authenticationLogic.ValidateUser(user);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogError(ex.Message);
+                return Unauthorized(ex.Message);
             }
 
             var jwtToken = await _authenticationLogic.CreateToken();

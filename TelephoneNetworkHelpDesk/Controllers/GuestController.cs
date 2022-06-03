@@ -10,22 +10,26 @@ using TelephoneNetworkProvider.ActionFilters;
 using Microsoft.AspNetCore.Authorization;
 using BussinessLogic.Exceptions;
 using Entities.DataTransferObjects;
+using Logger;
 
 namespace TelephoneNetworkProvider.Controllers
 {
-    [Route("/guest-profile")]
     [AllowAnonymous]
-    public class GuestController : Controller
+    [Route("/guest-profile")]
+    [ApiController]
+    public class GuestController : ControllerBase
     {
         private IGuestLogic _guestLogic;
+        private ILoggerManager _logger;
 
-        public GuestController(IGuestLogic guestLogic)
+        public GuestController(IGuestLogic guestLogic, ILoggerManager logger)
         {
             _guestLogic = guestLogic;
+            _logger = logger;
         }
 
-        [ServiceFilter(typeof(CustomerExistenceFilterAttribute))]
-        [HttpGet("/guest-profile/customers/customer/{customerId}")]
+
+        [HttpGet("/guest-profile/customers/customer/{customerId:int}")]
         public async Task<IActionResult> GetCustomerInfoAsync(int customerId)
         {
 
@@ -36,10 +40,12 @@ namespace TelephoneNetworkProvider.Controllers
             }
             catch (CustomerDoesntExistException ex)
             {
+                _logger.LogError(ex.Message);
                 return NotFound(ex.Message);
             }
             return Ok(customer);
         }
+
 
         [ServiceFilter(typeof(ParametersValidationFilterAttribute))]
         [HttpGet("/guest-profile/customers")]
@@ -48,10 +54,11 @@ namespace TelephoneNetworkProvider.Controllers
             IEnumerable<CustomerForReadInGuestDto> customers;
             try
             {
-                customers = await _guestLogic.GetCustomersAsync(parameters);
+                customers = await _guestLogic.GetCustomersInfoAsync(parameters);
             }
             catch (ArgumentOutOfRangeException ex)
             {
+                _logger.LogError(ex.Message);
                 return BadRequest(ex.Message);
             }
             return Ok(customers);

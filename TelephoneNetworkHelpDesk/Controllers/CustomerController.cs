@@ -10,6 +10,7 @@ using TelephoneNetworkProvider.ActionFilters;
 using System.Threading.Tasks;
 using BussinessLogic.Exceptions;
 using System.Collections.Generic;
+using Logger;
 
 namespace TelephoneNetworkProvider.Controllers
 {
@@ -19,17 +20,40 @@ namespace TelephoneNetworkProvider.Controllers
     public class CustomerController : ControllerBase
     {
         private ICustomerLogic _customerLogic;
-        private readonly int _customerId;
+        private ILoggerManager _logger;
 
-        public CustomerController(ICustomerLogic customerLogic)
+        public CustomerController(ICustomerLogic customerLogic, ILoggerManager logger)
         {
             _customerLogic = customerLogic;
+            _logger = logger;
+        }
 
+        private string GetUserIdFromRequest()
+        {
             var identity = HttpContext.User.Identity as ClaimsIdentity;
             var claim = identity.Claims
                 .Where(c => c.Type.Equals(ClaimTypes.Name))
                 .FirstOrDefault();
-            _customerId = Int32.Parse(claim.Value);
+            if (claim is null)
+                throw new InvalidOperationException("user claim wasn't found");
+            return claim.Value;
+        }
+
+        private async Task<int> GetCustomerIdFromRequest()
+        {
+            int customerId;
+            string userId = GetUserIdFromRequest();
+            try
+            {
+                customerId = await _customerLogic.GetCustomerIdAsync(userId);
+            }
+            catch (CustomerDoesntExistException) {
+                string exMessage = "invalid user claim";
+                _logger.LogError(exMessage);
+                throw new InvalidOperationException(exMessage);
+            }
+
+            return customerId;
         }
 
         [HttpGet("/customer-profile/info")]
@@ -38,45 +62,68 @@ namespace TelephoneNetworkProvider.Controllers
             CustomerForReadInCustomerDto customer;
             try
             {
-                customer = await _customerLogic.GetCustomerInfoAsync(_customerId);
+                int customerId = await GetCustomerIdFromRequest();
+                customer = await _customerLogic.GetCustomerInfoAsync(customerId);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest(ex.Message);
             }
             catch (CustomerDoesntExistException ex)
             {
+                _logger.LogError(ex.Message);
                 return NotFound(ex.Message);
             }
             return Ok(customer);
         }
 
+
         [ServiceFilter(typeof(DtoValidationFilterAttribute))]
         [HttpPut("/customer-profile/update")]
-        public IActionResult UpdateCustomerInfo([FromBody] CustomerForUpdateInCustomerDto customerDto)
+        public async Task<IActionResult> UpdateCustomerInfo([FromBody] CustomerForUpdateInCustomerDto customerDto)
         {
             try
             {
-                _customerLogic.UpdateCustomerInfo(_customerId, customerDto);
+                int customerId = await GetCustomerIdFromRequest();
+                await _customerLogic.UpdateCustomerInfo(customerId, customerDto);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest(ex.Message);
             }
             catch (CustomerDoesntExistException ex)
             {
+                _logger.LogError(ex.Message);
                 return NotFound(ex.Message);
             }
             return NoContent();
         }
+
 
         [HttpPost("/customer-profile/replenish-balance")]
         public async Task<IActionResult> ReplenishTheBalanceAsync([FromBody] Decimal currency)
         {
             try
             {
-                await _customerLogic.ReplenishTheBalanceAsync(_customerId, currency);
+                int customerId = await GetCustomerIdFromRequest();
+                await _customerLogic.ReplenishTheBalanceAsync(customerId, currency);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest(ex.Message);
             }
             catch (ArgumentOutOfRangeException ex)
             {
+                _logger.LogError(ex.Message);
                 return BadRequest(ex.Message);
             }
             return NoContent();
         }
 
-        [ServiceFilter(typeof(CustomerExistenceFilterAttribute))]
+
         [HttpGet("/customer-profile/customers/customer/{customerId:int}")]
         public async Task<IActionResult> GetCustomerInfoAsync(int customerId)
         {
@@ -87,10 +134,12 @@ namespace TelephoneNetworkProvider.Controllers
             }
             catch (CustomerDoesntExistException ex)
             {
+                _logger.LogError(ex.Message);
                 return NotFound(ex.Message);
             }
             return Ok(customer);
         }
+
 
         [ServiceFilter(typeof(ParametersValidationFilterAttribute))]
         [HttpGet("/customer-profile/customers")]
@@ -99,10 +148,11 @@ namespace TelephoneNetworkProvider.Controllers
             IEnumerable<CustomerForReadInCustomerDto> customers;
             try
             {
-                customers = await _customerLogic.GetCustomersAsync(parameters);
+                customers = await _customerLogic.GetCustomersInfoAsync(parameters);
             }
             catch (ArgumentOutOfRangeException ex)
             {
+                _logger.LogError(ex.Message);
                 return BadRequest(ex.Message);
             }
             return Ok(customers);

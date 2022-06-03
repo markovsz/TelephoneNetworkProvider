@@ -5,14 +5,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Entities.Models;
-using AutoMapper;
-using Repository;
 using Entities.DataTransferObjects;
 using Entities.RequestFeatures;
 using BussinessLogic;
 using TelephoneNetworkProvider.ActionFilters;
 using BussinessLogic.Exceptions;
+using Logger;
 
 namespace TelephoneNetworkProvider.Controllers
 {
@@ -22,11 +20,14 @@ namespace TelephoneNetworkProvider.Controllers
     public class AdministratorController : ControllerBase
     {
         private IAdministratorLogic _administratorLogic;
+        private ILoggerManager _logger;
 
-        public AdministratorController(IAdministratorLogic administratorLogic)
+        public AdministratorController(IAdministratorLogic administratorLogic, ILoggerManager logger)
         {
             _administratorLogic = administratorLogic;
+            _logger = logger;
         }
+
 
         [ServiceFilter(typeof(ParametersValidationFilterAttribute))]
         [HttpGet("/administrator-profile/customers")]
@@ -35,16 +36,17 @@ namespace TelephoneNetworkProvider.Controllers
             IEnumerable<CustomerForReadInAdministratorDto> customers;
             try
             {
-                customers = await _administratorLogic.GetCustomersAsync(parameters);
+                customers = await _administratorLogic.GetCustomersInfoAsync(parameters);
             }
             catch (ArgumentOutOfRangeException ex)
             {
+                _logger.LogError(ex.Message);
                 return BadRequest(ex.Message);
             }
             return Ok(customers);
         }
 
-        [ServiceFilter(typeof(CustomerExistenceFilterAttribute))]
+
         [HttpGet("/administrator-profile/customers/customer/{customerId:int}", Name = "GetCustomer")]
         public async Task<IActionResult> GetCustomerInfoAsync(int customerId)
         {
@@ -53,27 +55,28 @@ namespace TelephoneNetworkProvider.Controllers
             {
                 customer = await _administratorLogic.GetCustomerInfoAsync(customerId);
             }
-            catch (CustomerDoesntExistException e)
+            catch (CustomerDoesntExistException ex)
             {
-                return NotFound(e.Message);
+                _logger.LogError(ex.Message);
+                return NotFound(ex.Message);
             }
             return Ok(customer);
         }
 
 
         [ServiceFilter(typeof(ParametersValidationFilterAttribute))]
-        [ServiceFilter(typeof(CustomerExistenceFilterAttribute))]
         [HttpGet("/administrator-profile/customers/customer/{customerId:int}/calls")]
         public async Task<IActionResult> GetCustomerCallsAsync(int customerId, [FromQuery] CallParameters parameters)
         {
             IEnumerable<CallForReadInAdministratorDto> calls;
             try
             {
-                calls = await _administratorLogic.GetCustomerCallsAsync(customerId, parameters);
+                calls = await _administratorLogic.GetCustomerCallsInfoAsync(customerId, parameters);
             }
-            catch (InvalidOperationException e)
+            catch (InvalidOperationException ex)
             {
-                return Conflict(e.Message);
+                _logger.LogError(ex.Message);
+                return Conflict(ex.Message);
             }
             return Ok(calls);
         }
@@ -86,18 +89,18 @@ namespace TelephoneNetworkProvider.Controllers
             IEnumerable<CallForReadInAdministratorDto> calls;
             try
             {
-                calls = await _administratorLogic.GetCallsAsync(parameters);
+                calls = await _administratorLogic.GetCallsInfoAsync(parameters);
             }
             catch (ArgumentOutOfRangeException ex)
             {
+                _logger.LogError(ex.Message);
                 return BadRequest(ex.Message);
             }
             return Ok(calls);
         }
 
 
-        [ServiceFilter(typeof(CallExistenceFilterAttribute))]
-        [HttpGet("/administrator-profile/calls/call/{id:int}")]
+        [HttpGet("/administrator-profile/calls/call/{callId:int}")]
         public async Task<IActionResult> GetCallInfoAsync(int callId)
         {
             CallForReadInAdministratorDto call;
@@ -105,15 +108,16 @@ namespace TelephoneNetworkProvider.Controllers
             {
                 call = await _administratorLogic.GetCallInfoAsync(callId);
             }
-            catch (CallDoesntExistException e)
+            catch (CallDoesntExistException ex)
             {
-                return NotFound(e.Message);
+                _logger.LogError(ex.Message);
+                return NotFound(ex.Message);
             }
             return Ok(call);
         }
 
 
-        [HttpPost("/administrator-profile/customers/phonenumber/check")]
+        [HttpGet("/administrator-profile/customers/phonenumber/check")]
         public async Task<IActionResult> CheckPhoneNumberForExistenceAsync(string phoneNumber)
         {
             bool isExist = await _administratorLogic.CheckPhoneNumberForExistenceAsync(phoneNumber);
@@ -121,28 +125,28 @@ namespace TelephoneNetworkProvider.Controllers
         }
 
 
-        [ServiceFilter(typeof(CustomerExistenceFilterAttribute))]
-        [HttpPost("/administrator-profile/customers/customer/{customerId:int}/phonenumber/set")]
-        public async Task<IActionResult> TryToSetNewPhoneNumberAsync(int customerId, string phoneNumber) //change 'try' to 'set'
+        [HttpGet("/administrator-profile/customers/customer/{customerId:int}/phonenumber/set")]
+        public async Task<IActionResult> TryToSetNewPhoneNumberAsync(int customerId, string phoneNumber)
         {
             bool status;
             try
             {
-                status = await _administratorLogic.TryToSetNewPhoneNumberAsync(customerId, phoneNumber); /*!*/
+                status = await _administratorLogic.TryToSetNewPhoneNumberAsync(customerId, phoneNumber);
             }
-            catch (CustomerDoesntExistException e)
+            catch (CustomerDoesntExistException ex)
             {
-                return NotFound(e.Message);
+                _logger.LogError(ex.Message);
+                return NotFound(ex.Message);
             }
-            catch (InvalidOperationException e)
+            catch (InvalidOperationException ex)
             {
-                return Conflict(e.Message);
+                _logger.LogError(ex.Message);
+                return Conflict(ex.Message);
             }
             return Ok(status);
         }
 
 
-        [ServiceFilter(typeof(CustomerExistenceFilterAttribute))]
         [HttpPost("/administrator-profile/customers/customer/{customerId:int}/block")]
         public async Task<IActionResult> BlockCustomerAsync(int customerId)
         {
@@ -150,13 +154,15 @@ namespace TelephoneNetworkProvider.Controllers
             {
                 await _administratorLogic.BlockCustomerAsync(customerId);
             }
-            catch (CustomerDoesntExistException e)
+            catch (CustomerDoesntExistException ex)
             {
-                return NotFound(e.Message);
+                _logger.LogError(ex.Message);
+                return NotFound(ex.Message);
             }
-            catch (InvalidOperationException e)
+            catch (InvalidOperationException ex)
             {
-                return Conflict(e.Message);
+                _logger.LogError(ex.Message);
+                return Conflict(ex.Message);
             }
             return NoContent();
         }
@@ -172,16 +178,16 @@ namespace TelephoneNetworkProvider.Controllers
             {
                 (customerId, customerDto) = await _administratorLogic.CreateCustomerAsync(customer);
             }
-            catch (InvalidOperationException e)
+            catch (InvalidOperationException ex)
             {
-                return Conflict(e.Message);
+                _logger.LogError(ex.Message);
+                return Conflict(ex.Message);
             }
             return CreatedAtRoute("GetCustomer", new { customerId = customerId }, customerDto);
         }
 
 
         [ServiceFilter(typeof(DtoValidationFilterAttribute))]
-        [ServiceFilter(typeof(CustomerExistenceFilterAttribute))]
         [HttpPut("/administrator-profile/customers/customer/{customerId:int}/update")]
         public IActionResult UpdateCustomer(int customerId, [FromBody] CustomerForUpdateInAdministratorDto customer)
         {
@@ -189,20 +195,21 @@ namespace TelephoneNetworkProvider.Controllers
             {
                 _administratorLogic.UpdateCustomerAsync(customerId, customer);
             }
-            catch (CustomerDoesntExistException e)
+            catch (CustomerDoesntExistException ex)
             {
-                return NotFound(e.Message);
+                _logger.LogError(ex.Message);
+                return NotFound(ex.Message);
             }
-            catch (InvalidOperationException e)
+            catch (InvalidOperationException ex)
             {
-                return Conflict(e.Message);
+                _logger.LogError(ex.Message);
+                return Conflict(ex.Message);
             }
             return NoContent();
         }
 
 
         [ServiceFilter(typeof(DtoValidationFilterAttribute))]
-        [ServiceFilter(typeof(CustomerExistenceFilterAttribute))]
         [HttpPost("/administrator-profile/customers/customer/{customerId:int}/delete")]
         public async Task<IActionResult> DeleteCustomerAsync(int customerId, [FromBody] CustomerForUpdateInAdministratorDto customer)
         {
@@ -210,20 +217,21 @@ namespace TelephoneNetworkProvider.Controllers
             {
                 await _administratorLogic.DeleteCustomerAsync(customerId);
             }
-            catch (CustomerDoesntExistException e)
+            catch (CustomerDoesntExistException ex)
             {
-                return NotFound(e.Message);
+                _logger.LogError(ex.Message);
+                return NotFound(ex.Message);
             }
-            catch (InvalidOperationException e)
+            catch (InvalidOperationException ex)
             {
-                return Conflict(e.Message);
+                _logger.LogError(ex.Message);
+                return Conflict(ex.Message);
             }
             return NoContent();
         }
 
 
         [ServiceFilter(typeof(ParametersValidationFilterAttribute))]
-        [ServiceFilter(typeof(CustomerExistenceFilterAttribute))]
         [HttpGet("/administrator-profile/customers/customer/{customerId:int}/messages")]
         public async Task<IActionResult> GetAdministratorMessagesByCustomerIdAsync(int customerId, [FromQuery] AdministratorMessageParameters parameters)
         {
@@ -232,15 +240,20 @@ namespace TelephoneNetworkProvider.Controllers
             {
                 messages = await _administratorLogic.GetAdministratorMessagesByCustomerIdAsync(customerId, parameters);
             }
-            catch (CustomerDoesntExistException e)
+            catch (CustomerDoesntExistException ex)
             {
-                return NotFound(e.Message);
+                _logger.LogError(ex.Message);
+                return NotFound(ex.Message);
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest(ex.Message);
             }
             return Ok(messages);
         }
 
 
-        [ServiceFilter(typeof(CustomerExistenceFilterAttribute))]
         [HttpGet("/administrator-profile/customers/customer/{customerId:int}/time-pasts-from-last-warn-message")]/*!*/
         public async Task<IActionResult> TimePastsFromLastWarnMessageAsync(int customerId)
         {
@@ -249,9 +262,10 @@ namespace TelephoneNetworkProvider.Controllers
             {
                 time = await _administratorLogic.TimePastsFromLastWarnMessageAsync(customerId);
             }
-            catch (CustomerDoesntExistException e)
+            catch (CustomerDoesntExistException ex)
             {
-                return NotFound(e.Message);
+                _logger.LogError(ex.Message);
+                return NotFound(ex.Message);
             }
             return Ok(time);
         }
