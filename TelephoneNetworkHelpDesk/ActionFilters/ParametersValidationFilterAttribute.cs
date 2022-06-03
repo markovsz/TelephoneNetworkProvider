@@ -4,11 +4,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Logger;
 
 namespace TelephoneNetworkProvider.ActionFilters
 {
-    public class ParametersValidationFilterAttribute : IActionFilter
+    public class ParametersValidationFilterAttribute : IActionFilter /*!*/
     {
+        private ILoggerManager _logger;
+
+        public ParametersValidationFilterAttribute(ILoggerManager logger)
+        {
+            _logger = logger;
+        }
+
         public void OnActionExecuted(ActionExecutedContext context)
         {
         }
@@ -19,8 +27,9 @@ namespace TelephoneNetworkProvider.ActionFilters
             var controller = context.RouteData.Values["controller"];
             if (!context.ModelState.IsValid)
             {
-                //_logger.LogError($"Invalid model state for the object. Controller: { controller}, action: { action}");
-                context.Result = new UnprocessableEntityObjectResult(context.ModelState);
+                var errorsValue = context.ModelState.ToString();
+                _logger.LogError($"Invalid parameters. Controller: {controller}, action: {action}, errors: {errorsValue}");
+                context.Result = new BadRequestObjectResult(context.ModelState);
             }
         }
     }
