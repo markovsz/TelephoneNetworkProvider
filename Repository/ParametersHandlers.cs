@@ -86,13 +86,13 @@ namespace Repository
             if (parameters.PageSize.HasValue)
             {
                 if (parameters.PageSize.Value > 1 &&
-                parameters.PageSize.Value <= RequestParameters.MaxPageSize)
+                    parameters.PageSize.Value <= RequestParameters.MaxPageSize)
                 {
                     pageSize = parameters.PageSize.Value;
                 }
                 else
                 {
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException("Page size should be between 2 and 50");
                 }
             }
 
@@ -100,7 +100,7 @@ namespace Repository
             int customersCountOffset = (customersCount == 0 ? 1 : 0);
             if (parameters.PageNumber < 1 || parameters.PageNumber > (customersCount + pageSize - 1 + customersCountOffset) / pageSize)
             {
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException("Page number out of range");
             }
 
             return elements

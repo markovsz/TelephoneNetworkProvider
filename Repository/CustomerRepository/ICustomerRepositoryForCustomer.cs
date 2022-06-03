@@ -11,6 +11,7 @@ namespace Repository.CustomerRepository
     public interface ICustomerRepositoryForCustomer
     {
         Task<Customer> GetCustomerAsync(int customerId, bool trackChanges);
+        Task<Customer> GetCustomerByUserIdAsync(string userId, bool trackChanges);
         Task<IEnumerable<Customer>> GetCustomersAsync(CustomerParameters parameters);
         void UpdateCustomer(Customer customer);
         void DeleteCustomer(Customer customer);

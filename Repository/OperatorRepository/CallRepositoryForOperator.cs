@@ -23,7 +23,7 @@ namespace Repository.OperatorRepository
             .ToListAsync();
 
         public async Task<IEnumerable<Call>> GetCustomerCallsAsync(int customerId, CallParameters parameters) =>
-            await FindByCondition(c => c.CallerId.Equals(customerId) || c.CalledBy.Equals(customerId), false)
+            await FindByCondition(c => c.CallerId.Equals(customerId) || c.CalledById.Equals(customerId), false)
             .CallParametersHandler(parameters)
             .ToListAsync();
 

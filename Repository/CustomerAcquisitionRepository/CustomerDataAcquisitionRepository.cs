@@ -23,6 +23,10 @@ namespace Repository.CustomerAcquisitionRepository
                 .Where(expression)
                 .FirstOrDefaultAsync();
 
+        public async Task<Customer> GetCustomerAsync(Expression<Func<Customer, bool>> expression, bool trackChanges) =>
+            await FindByCondition(expression, trackChanges)
+                .FirstOrDefaultAsync();
+
         public async Task<Customer> GetCustomerAsync(int customerId, bool trackChanges) => 
             await FindByCondition(c => c.Id.Equals(customerId), trackChanges)
                 .FirstOrDefaultAsync();
