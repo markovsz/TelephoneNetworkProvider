@@ -47,6 +47,11 @@ namespace UnitTests
             return GetCustomers().Where(c => c.Id.Equals(customerId)).FirstOrDefault();
         }
 
+        private Customer GetUnblockedCustomer(int customerId)
+        {
+            return GetCustomers().Where(c => c.Id.Equals(customerId) && !c.IsBlocked).FirstOrDefault();
+        }
+
         private IEnumerable<Call> GetCalls()
         {
             return new List<Call>()
@@ -82,14 +87,15 @@ namespace UnitTests
             mapperMock.Setup(m => m.Map<Call>(It.IsAny<CallForCreateInOperatorDto>())).Returns((CallForCreateInOperatorDto cd) => new Call() { CallerId = cd.CallerId, CalledById = cd.CalledById });
 
 
-            operatorCustomerRepositoryMock.Setup(m => m.GetCustomerInfoAsync(It.IsAny<int>())).Returns((int id) => Task.FromResult(GetCustomer(id)));
+            operatorCustomerRepositoryMock.Setup(m => m.GetUnblockedCustomerAsync(It.IsAny<int>())).Returns((int id) => Task.FromResult(GetUnblockedCustomer(id)));
+            operatorCustomerRepositoryMock.Setup(m => m.GetCustomerAsync(It.IsAny<int>())).Returns((int id) => Task.FromResult(GetCustomer(id)));
             operatorCustomerRepositoryMock.Setup(m => m.GetCustomersAsync(It.IsAny<CustomerParameters>())).Returns((CustomerParameters p) => Task.FromResult(GetCustomers()));
             
             operatorCallRepositoryMock.Setup(m => m.CreateCallAsync(It.IsAny<Call>())).Verifiable();
             operatorCallRepositoryMock.Setup(m => m.DeleteCallByIdAsync(It.IsAny<int>())).Verifiable();
             operatorCallRepositoryMock.Setup(m => m.GetCustomerCallsAsync(It.IsAny<int>(), It.IsAny<CallParameters>())).Returns((int id, CallParameters p) => Task.FromResult(id >= 1 && id <= 6 ? GetCalls() : null));
-            operatorCallRepositoryMock.Setup(m => m.GetCallsAsync(It.IsAny<CallParameters>(), It.IsAny<bool>())).Returns((CallParameters p, bool tc) => Task.FromResult(GetCalls()));
-            operatorCallRepositoryMock.Setup(m => m.GetCallInfoAsync(It.IsAny<int>(), It.IsAny<bool>())).Returns((int id, bool tc) => Task.FromResult(GetCall(id)));
+            operatorCallRepositoryMock.Setup(m => m.GetCallsAsync(It.IsAny<CallParameters>())).Returns((CallParameters p) => Task.FromResult(GetCalls()));
+            operatorCallRepositoryMock.Setup(m => m.GetCallAsync(It.IsAny<int>(), It.IsAny<bool>())).Returns((int id, bool tc) => Task.FromResult(GetCall(id)));
 
             operatorManagerMock.Setup(m => m.Customers).Returns(operatorCustomerRepositoryMock.Object);
             operatorManagerMock.Setup(m => m.Calls).Returns(operatorCallRepositoryMock.Object);
@@ -103,6 +109,7 @@ namespace UnitTests
         [InlineData(1, 8)]
         [InlineData(6, 7)]
         [InlineData(0, 0)]
+        [InlineData(2, 6)]
         [InlineData(7, 7)]
         public async Task InvalidCustomer_CreateCallAsync(int callerId, int calledById)
         {
@@ -129,7 +136,6 @@ namespace UnitTests
         [InlineData(1, 3)]
         [InlineData(1, 5)]
         [InlineData(1, 6)]
-        [InlineData(2, 6)]
         [InlineData(3, 3)]
         [InlineData(6, 6)]
         [InlineData(1, 1)]
@@ -253,7 +259,7 @@ namespace UnitTests
             IEnumerable<CustomerForReadInOperatorDto> customers;
 
             //Act
-            customers = await operatorLogic.GetCustomersAsync(parameters);
+            customers = await operatorLogic.GetCustomersInfoAsync(parameters);
 
             //Assert
             Assert.NotNull(customers);
@@ -271,7 +277,7 @@ namespace UnitTests
             //Act
             try
             {
-                callDto = await operatorLogic.GetCallAsync(callId);
+                callDto = await operatorLogic.GetCallInfoAsync(callId);
             }
             //Assert
             catch (CallDoesntExistException ex)
@@ -293,7 +299,7 @@ namespace UnitTests
             //Act
             try
             {
-                var callDto = await operatorLogic.GetCallAsync(callId);
+                var callDto = await operatorLogic.GetCallInfoAsync(callId);
             }
             //Assert
             catch (CallDoesntExistException ex)
@@ -312,7 +318,7 @@ namespace UnitTests
             IEnumerable<CallForReadInOperatorDto> calls;
 
             //Act
-            calls = await operatorLogic.GetCallsAsync(parameters);
+            calls = await operatorLogic.GetCallsInfoAsync(parameters);
 
             //Assert
             Assert.NotNull(calls);
@@ -331,7 +337,7 @@ namespace UnitTests
             //Act
             try
             {
-                 calls = await operatorLogic.GetCustomerCallsAsync(customerId, parameters);
+                 calls = await operatorLogic.GetCustomerCallsInfoAsync(customerId, parameters);
             }
             //Assert
             catch (CustomerDoesntExistException ex)
@@ -354,7 +360,7 @@ namespace UnitTests
             //Act
             try
             {
-                var calls = await operatorLogic.GetCustomerCallsAsync(customerId, parameters);
+                var calls = await operatorLogic.GetCustomerCallsInfoAsync(customerId, parameters);
             }
             //Assert
             catch (CustomerDoesntExistException ex)

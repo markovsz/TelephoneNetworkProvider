@@ -57,7 +57,7 @@ namespace UnitTests
 
             CreateMapMock<Customer, CustomerForReadInGuestDto>(mapperMock);
 
-            guestCustomerRepositoryMock.Setup(m => m.GetCustomerInfoAsync(It.IsAny<int>())).Returns((int id) => Task.FromResult(GetCustomer(id)));
+            guestCustomerRepositoryMock.Setup(m => m.GetCustomerAsync(It.IsAny<int>())).Returns((int id) => Task.FromResult(GetCustomer(id)));
             guestCustomerRepositoryMock.Setup(m => m.GetCustomersAsync(It.IsAny<CustomerParameters>())).Returns((CustomerParameters p) => Task.FromResult(GetCustomers()));
 
             guestManagerMock.Setup(m => m.Customers).Returns(guestCustomerRepositoryMock.Object);
@@ -118,7 +118,7 @@ namespace UnitTests
             var parameters = new CustomerParameters();
 
             //Act
-            var customer = await guestLogic.GetCustomersAsync(parameters);
+            var customer = await guestLogic.GetCustomersInfoAsync(parameters);
 
             //Assert
             Assert.NotNull(customer);

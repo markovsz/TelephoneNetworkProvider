@@ -212,7 +212,7 @@ namespace UnitTests
             IEnumerable<CustomerForReadInCustomerDto> customers;
 
             //Act
-            customers = await customerLogic.GetCustomersAsync(parameters);
+            customers = await customerLogic.GetCustomersInfoAsync(parameters);
 
             //Assert
             Assert.NotNull(customers);
@@ -231,7 +231,7 @@ namespace UnitTests
             //Act
             try
             {
-                calls = await customerLogic.GetCallsAsync(customerId, parameters);
+                calls = await customerLogic.GetCallsInfoAsync(customerId, parameters);
             }
             //Assert
             catch (CustomerDoesntExistException ex)
@@ -254,7 +254,7 @@ namespace UnitTests
             //Act
             try
             {
-                var calls = await customerLogic.GetCallsAsync(customerId, parameters);
+                var calls = await customerLogic.GetCallsInfoAsync(customerId, parameters);
             }
             //Assert
             catch (CustomerDoesntExistException ex)

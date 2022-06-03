@@ -87,33 +87,34 @@ namespace UnitTests
         {
             mapperMock = new Mock<IMapper>();
             userManipulationMock = new Mock<IUserManipulationLogic>();
-            
+
             administratorCustomerRepositoryMock = new Mock<ICustomerRepositoryForAdministrator>();
             administratorMessageRepositoryMock = new Mock<IAdministratorMessageRepositoryForAdministrator>();
             administratorCallRepositoryMock = new Mock<ICallRepositoryForAdministrator>();
-            
+
             administratorManagerMock = new Mock<IAdministratorManager>();
-            
+
             administratorLogic = new AdministratorLogic(administratorManagerMock.Object, userManipulationMock.Object, mapperMock.Object);
 
             userManipulationMock.Setup(m => m.CreateUserAsync(It.IsAny<string>(), It.IsAny<string>(), "Customer")).ReturnsAsync(new User(It.IsAny<string>())).Verifiable();
-            
+
             CreateMapMock<CustomerForCreateInAdministratorDto, Customer>(mapperMock);
             CreateMapMock<CustomerForUpdateInAdministratorDto, Customer>(mapperMock);
             CreateMapMock<Customer, CustomerForReadInAdministratorDto>(mapperMock);
             CreateMapMock<Call, CallForReadInAdministratorDto>(mapperMock);
-            
+
 
             administratorCustomerRepositoryMock.Setup(m => m.AddCustomerAsync(It.IsAny<Customer>())).Verifiable();
-            administratorCustomerRepositoryMock.Setup(m => m.GetCustomerInfoAsync(It.IsAny<int>(), It.IsAny<bool>())).Returns((int id, bool tc) => Task.FromResult(GetCustomer(id)));
+            administratorCustomerRepositoryMock.Setup(m => m.GetCustomerAsync(It.IsAny<int>(), It.IsAny<bool>())).Returns((int id, bool tc) => Task.FromResult(GetCustomer(id)));
+            //administratorCustomerRepositoryMock.Setup(m => m.GetUnblockedCustomerAsync(It.IsAny<int>())).Returns((int id) => Task.FromResult(GetCustomer(id)));
             administratorCustomerRepositoryMock.Setup(m => m.UpdateCustomer(It.IsAny<Customer>())).Verifiable();
             administratorCustomerRepositoryMock.Setup(m => m.FindCustomerByPhoneNumberAsync(It.IsAny<string>(), It.IsAny<bool>())).Returns(Task.FromResult(GetCustomer(0)));
-            
+
             administratorCallRepositoryMock.Setup(m => m.GetCustomerCallsAsync(It.IsAny<int>(), It.IsAny<CallParameters>())).Returns((int id, CallParameters p) => Task.FromResult((id >= 1 && id <= 6) ? GetCalls() : null));
             administratorCallRepositoryMock.Setup(m => m.GetCallAsync(It.IsAny<int>())).Returns((int id) => Task.FromResult(GetCall(id)));
-            
+
             administratorMessageRepositoryMock.Setup(m => m.GetCustomerWarningMessagesFromTimeAsync(It.IsAny<int>(), It.IsAny<DateTime>())).Returns((int id, DateTime dt) => Task.FromResult((id >= 1 && id <= 6) ? GetMessages() : null));
-            
+
 
             administratorManagerMock.Setup(m => m.Customers).Returns(administratorCustomerRepositoryMock.Object);
             administratorManagerMock.Setup(m => m.Calls).Returns(administratorCallRepositoryMock.Object);
@@ -135,7 +136,7 @@ namespace UnitTests
             customerDto.Address = "Longon";
             customerDto.IsPhoneNumberHidedStr = "false";
 
-            
+
             //Act
             await administratorLogic.CreateCustomerAsync(customerDto);
 
@@ -333,7 +334,7 @@ namespace UnitTests
                 Assert.IsNotType<CustomerDoesntExistException>(ex);
                 return;
             }
-            Assert.NotNull(messages); /*!*/
+            Assert.NotNull(messages);
         }
 
         [Theory]
@@ -540,7 +541,7 @@ namespace UnitTests
                 Assert.IsNotType<CustomerDoesntExistException>(ex);
                 return;
             }
-            administratorCustomerRepositoryMock.Verify(m => m.DeleteCustomerByUserIdAsync(It.IsAny<int>()), Times.AtLeastOnce);
+            administratorCustomerRepositoryMock.Verify(m => m.DeleteCustomerByIdAsync(It.IsAny<int>()), Times.AtLeastOnce);
         }
 
         [Theory]
@@ -552,7 +553,7 @@ namespace UnitTests
 
             //Act
             status = await administratorLogic.CheckPhoneNumberForExistenceAsync(phoneNumber);
-            
+
             //Assert
             Assert.False(status);
         }
@@ -612,7 +613,7 @@ namespace UnitTests
             var parameters = new CustomerParameters();
 
             //Act
-            var customers = await administratorLogic.GetCustomersAsync(parameters);
+            var customers = await administratorLogic.GetCustomersInfoAsync(parameters);
 
             //Assert
             Assert.NotNull(customers);
@@ -632,7 +633,7 @@ namespace UnitTests
             //Act
             try
             {
-                customers = await administratorLogic.GetCustomerCallsAsync(customerId, parameters);
+                customers = await administratorLogic.GetCustomerCallsInfoAsync(customerId, parameters);
             }
             //Assert
             catch (CustomerDoesntExistException ex)
@@ -656,7 +657,7 @@ namespace UnitTests
             //Act
             try
             {
-                var customers = await administratorLogic.GetCustomerCallsAsync(customerId, parameters);
+                var customers = await administratorLogic.GetCustomerCallsInfoAsync(customerId, parameters);
             }
             //Assert
             catch (CustomerDoesntExistException ex)
@@ -674,70 +675,10 @@ namespace UnitTests
             var parameters = new CallParameters();
 
             //Act
-            var calls = await administratorLogic.GetCallsAsync(parameters);
+            var calls = await administratorLogic.GetCallsInfoAsync(parameters);
 
             //Assert
             Assert.NotNull(calls);
-        }
-
-        [Theory]
-        [InlineData(1)]
-        [InlineData(2)]
-        [InlineData(6)]
-        public async Task ValidCall_CheckCallAsync(int id)
-        {
-            //Arrange
-
-            //Act
-            var status = await administratorLogic.CheckCallAsync(id);
-
-            //Assert
-            Assert.True(status);
-        }
-
-        [Theory]
-        [InlineData(0)]
-        [InlineData(7)]
-        [InlineData(8)]
-        public async Task InvalidCall_CheckCallAsync(int id)
-        {
-            //Arrange
-
-            //Act
-            var status = await administratorLogic.CheckCallAsync(id);
-
-            //Assert
-            Assert.False(status);
-        }
-
-        [Theory]
-        [InlineData(1)]
-        [InlineData(2)]
-        [InlineData(6)]
-        public async Task ValidCall_CheckCustomerAsync(int customerId)
-        {
-            //Arrange
-
-            //Act
-            var status = await administratorLogic.CheckCustomerAsync(customerId);
-
-            //Assert
-            Assert.True(status);
-        }
-
-        [Theory]
-        [InlineData(0)]
-        [InlineData(7)]
-        [InlineData(8)]
-        public async Task InvalidCall_CheckCustomerAsync(int customerId)
-        {
-            //Arrange
-
-            //Act
-            var status = await administratorLogic.CheckCustomerAsync(customerId);
-
-            //Assert
-            Assert.False(status);
         }
     }
 }
