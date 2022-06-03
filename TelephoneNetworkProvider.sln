@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BussinessLogic", "Bussiness
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests", "UnitTests\UnitTests.csproj", "{803F4DAA-FE35-4CC5-9A60-680B38F97486}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTests", "IntegrationTests\IntegrationTests.csproj", "{233A63FD-A699-47A8-9C2E-0375032ECFE1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntegrationTests", "IntegrationTests\IntegrationTests.csproj", "{233A63FD-A699-47A8-9C2E-0375032ECFE1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logger", "Logger\Logger.csproj", "{BE2AE57C-F17F-4D54-B4F0-61C727AEB722}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{233A63FD-A699-47A8-9C2E-0375032ECFE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{233A63FD-A699-47A8-9C2E-0375032ECFE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{233A63FD-A699-47A8-9C2E-0375032ECFE1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE2AE57C-F17F-4D54-B4F0-61C727AEB722}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE2AE57C-F17F-4D54-B4F0-61C727AEB722}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE2AE57C-F17F-4D54-B4F0-61C727AEB722}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE2AE57C-F17F-4D54-B4F0-61C727AEB722}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
