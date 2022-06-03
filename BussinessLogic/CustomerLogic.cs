@@ -83,11 +83,26 @@ namespace BussinessLogic
             return customerDto;
         }
 
+        public async Task<CustomerForReadInCustomerDto> GetCustomerInfoByUserIdAsync(string userId)
+        {
+            var customer = await _customerManager.Customers.GetCustomerByUserIdAsync(userId, false);
+            var customerDto = _mapper.Map<CustomerForReadInCustomerDto>(customer);
+            return customerDto;
+        }
+
         public async Task<IEnumerable<CustomerForReadInCustomerDto>> GetCustomersInfoAsync(CustomerParameters parameters)
         {
             var customers = await _customerManager.Customers.GetCustomersAsync(parameters);
             var customersDto = _mapper.Map<IEnumerable<CustomerForReadInCustomerDto>>(customers);
             return customersDto;
+        }
+
+        public async Task<int> GetCustomerIdAsync(string userId)
+        {
+            var customer = await _customerManager.Customers.GetCustomerByUserIdAsync(userId, false);
+            if(customer is null)
+                throw new CustomerDoesntExistException("Customer with this id doesn't exist");
+            return customer.Id;
         }
     }
 }

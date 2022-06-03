@@ -14,6 +14,7 @@ namespace BussinessLogic
     public class AdministratorLogic : IAdministratorLogic
     {
         const decimal StartingMoneyBalance = 0.0m;
+        static readonly DateTime MinMessageSendingTime = DateTime.MinValue;
 
         private IUserManipulationLogic _userManipulationLogic;
         private IAdministratorManager _administratorManager;
@@ -94,7 +95,7 @@ namespace BussinessLogic
                 .FirstOrDefault();
 
             if (message is null)
-                return new DateTime(1, 0, 0);
+                return MinMessageSendingTime;
             return message.SendingTime;
         }
 

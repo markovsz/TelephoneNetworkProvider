@@ -32,17 +32,19 @@ namespace BussinessLogic
             _configuration = configuration;
         }
 
-        public async Task<(bool, string)> ValidateUser(UserForAuthenticationDto user)
+        public async Task<string> ValidateUser(UserForAuthenticationDto user)
         {
             _user = await _userManager.FindByNameAsync(user.Login);
             bool isValid = _user != null && await _userManager.CheckPasswordAsync(_user, user.Password);
-            string role = null;
+            string role;
             if (isValid)
             {
                 var roles = await _userManager.GetRolesAsync(_user);
                 role = roles.FirstOrDefault();
             }
-            return (isValid, role);
+            else
+                throw new InvalidOperationException("Invalid login or password");
+            return role;
         }
 
         public async Task<string> CreateToken()
