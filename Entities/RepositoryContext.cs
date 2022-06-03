@@ -24,21 +24,6 @@ namespace Entities
         {
             base.OnModelCreating(modelBuilder);
 
-            /*modelBuilder.Entity<Customer>()
-                .HasOne(c => c.user)
-                .WithOne(u => u.RelatedCustomer)
-                .HasForeignKey("");
-
-            modelBuilder.Entity<Customer>()
-                .Property(c => c.MoneyBalance)
-                .HasColumnType("money")
-                .HasPrecision(10);
-
-            modelBuilder.Entity<Call>()
-                .HasOne(c => c.Caller)
-                .WithOne(c => c.);*/
-
-
             modelBuilder.Entity<Call>()
                 .HasOne(c => c.Caller)
                 .WithMany(c => c.InitiatedCalls)
