@@ -69,11 +69,9 @@ namespace Entities.Models
         
 
         [Required]
-        //[Column(TypeName = "decimal(18,4)")]
         public Decimal MoneyBalance { get; set; }
 
         public ICollection<Call> InitiatedCalls { get; set; }
         public ICollection<Call> ReceivedCalls { get; set; }
-        //public ICollection<AdministratorMessage> CustomerMessages { get; set; }
     }
 }

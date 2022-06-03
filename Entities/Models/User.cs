@@ -9,6 +9,10 @@ namespace Entities.Models
 {
     public class User : IdentityUser
     {
+        public User()
+        {
+        }
+
         public User(string userName)
         {
             UserName = userName;
@@ -18,9 +22,5 @@ namespace Entities.Models
             LockoutEnabled = false;
             AccessFailedCount = 100;
         }
-
-        //public string Role { get; set; }
-
-        //public Customer RelatedCustomer;
     }
 }
