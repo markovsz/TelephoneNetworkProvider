@@ -20,6 +20,7 @@ using System.Text;
 using BussinessLogic;
 using TelephoneNetworkProvider.ActionFilters;
 using Microsoft.OpenApi.Models;
+using Logger;
 
 namespace TelephoneNetworkProvider
 {
@@ -47,8 +48,6 @@ namespace TelephoneNetworkProvider
         public static void ConfigureActionFilters(this IServiceCollection services)
         {
             services.AddScoped<DtoValidationFilterAttribute>();
-            services.AddScoped<CustomerExistenceFilterAttribute>();
-            services.AddScoped<CallExistenceFilterAttribute>();
             services.AddScoped<ParametersValidationFilterAttribute>();
         }
 
@@ -115,6 +114,11 @@ namespace TelephoneNetworkProvider
                     Version = "v2"
                 });
             });
+        }
+
+        public static void ConfigureLogger(this IServiceCollection services)
+        {
+            services.AddScoped<ILoggerManager, LoggerManager>();
         }
     }
 }
